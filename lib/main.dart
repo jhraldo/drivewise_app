@@ -47,36 +47,67 @@ class DashboardPage extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 24),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.directions_car,
-                      size: 48,
+           Card(
+  child: Padding(
+    padding: const EdgeInsets.all(20),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(
+              Icons.directions_car,
+              size: 48,
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    'Mi vehículo',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            'Mi vehículo',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text('Consulta el estado y la información principal'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: 4),
+                  Text('Información principal del vehículo'),
+                ],
               ),
             ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        const Divider(),
+        const SizedBox(height: 12),
+        const VehicleInfoRow(
+          icon: Icons.directions_car_filled_outlined,
+          label: 'Vehículo',
+          value: 'Mazda 3 Touring',
+        ),
+        const SizedBox(height: 12),
+        const VehicleInfoRow(
+          icon: Icons.pin_outlined,
+          label: 'Placa',
+          value: 'ABC 123',
+        ),
+        const SizedBox(height: 12),
+        const VehicleInfoRow(
+          icon: Icons.speed_outlined,
+          label: 'Kilometraje',
+          value: '42.580 km',
+        ),
+        const SizedBox(height: 12),
+        const VehicleInfoRow(
+          icon: Icons.calendar_today_outlined,
+          label: 'Año',
+          value: '2024',
+        ),
+      ],
+    ),
+  ),
+),
             const SizedBox(height: 24),
             Text(
               'Resumen',
@@ -140,6 +171,37 @@ class SummaryCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+class VehicleInfoRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const VehicleInfoRow({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(label),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }
