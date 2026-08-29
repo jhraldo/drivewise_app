@@ -108,6 +108,40 @@ class DashboardPage extends StatelessWidget {
     ),
   ),
 ),
+const SizedBox(height: 24),
+Text(
+  'Estado del vehículo',
+  style: Theme.of(context).textTheme.titleLarge,
+),
+
+const SizedBox(height: 12),
+
+const Card(
+  child: Padding(
+    padding: EdgeInsets.all(16),
+    child: Column(
+      children: [
+        VehicleStatusRow(
+          icon: Icons.check_circle_outline,
+          title: 'Motor',
+          status: 'En buen estado',
+        ),
+        Divider(),
+        VehicleStatusRow(
+          icon: Icons.battery_charging_full,
+          title: 'Batería',
+          status: 'Nivel óptimo',
+        ),
+        Divider(),
+        VehicleStatusRow(
+          icon: Icons.tire_repair,
+          title: 'Neumáticos',
+          status: 'Revisión recomendada',
+        ),
+      ],
+    ),
+  ),
+),
             const SizedBox(height: 24),
             Text(
               'Resumen',
@@ -200,6 +234,40 @@ class VehicleInfoRow extends StatelessWidget {
           style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
+        ),
+      ],
+    );
+  }
+}
+class VehicleStatusRow extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String status;
+
+  const VehicleStatusRow({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.status,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        Text(
+          status,
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
       ],
     );
