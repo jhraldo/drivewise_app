@@ -21,7 +21,7 @@ class DriveWiseApp extends StatelessWidget {
         ),
         body: const Center(
           child: Text(
-            'Tu vehículo, bajo control.',
+            'Gestiona tu vehículo de forma fácil.',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
