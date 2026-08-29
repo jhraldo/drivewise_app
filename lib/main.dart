@@ -1,18 +1,33 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const DriveWiseApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class DriveWiseApp extends StatelessWidget {
+  const DriveWiseApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'DriveWise',
+      theme: ThemeData(
+        useMaterial3: true,
+      ),
       home: Scaffold(
-        body: Center(
-          child: Text('DriveWise'),
+        appBar: AppBar(
+          title: const Text('DriveWise'),
+        ),
+        body: const Center(
+          child: Text(
+            'Gestiona tu vehículo de forma fácil.',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
     );
