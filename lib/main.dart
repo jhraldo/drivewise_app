@@ -167,6 +167,36 @@ const Card(
                 ),
               ],
             ),
+            const SizedBox(height: 24),
+
+Text(
+  'Próximos recordatorios',
+  style: Theme.of(context).textTheme.titleLarge,
+),
+
+const SizedBox(height: 12),
+
+const ReminderCard(
+  icon: Icons.oil_barrel_outlined,
+  title: 'Cambio de aceite',
+  description: 'Programado para los próximos 1.200 km',
+),
+
+const SizedBox(height: 12),
+
+const ReminderCard(
+  icon: Icons.build_circle_outlined,
+  title: 'Revisión técnico-mecánica',
+  description: 'Pendiente para el próximo mes',
+),
+
+const SizedBox(height: 12),
+
+const ReminderCard(
+  icon: Icons.description_outlined,
+  title: 'Documentos del vehículo',
+  description: 'Revisar vencimiento del seguro',
+),
           ],
         ),
       ),
@@ -270,6 +300,35 @@ class VehicleStatusRow extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyMedium,
         ),
       ],
+    );
+  }
+}
+class ReminderCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String description;
+
+  const ReminderCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.description,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: Icon(icon),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        subtitle: Text(description),
+        trailing: const Icon(Icons.chevron_right),
+      ),
     );
   }
 }
