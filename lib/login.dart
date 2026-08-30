@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'main.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -94,8 +95,14 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
-                child: const Text('Iniciar sesión'),
+                onPressed: () {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const DashboardPage(),
+    ),
+  );
+},
               ),
             ),
           ],
