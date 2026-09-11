@@ -1,106 +1,66 @@
 import 'package:flutter/material.dart';
 
+import 'mantenimiento.dart';
+
 class MiVehiculoPage extends StatelessWidget {
   const MiVehiculoPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mi vehículo'),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.maybePop(context),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // Información principal del vehículo
           Card(
-            elevation: 2,
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  const Icon(
-                    Icons.two_wheeler,
-                    size: 120,
-                  ),
+                  Icon(Icons.two_wheeler, size: 120, color: colors.primary),
                   const SizedBox(height: 12),
-
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               'Yamaha FZ 2.0',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.headlineSmall,
                             ),
-                            SizedBox(height: 6),
+                            const SizedBox(height: 6),
                             Text(
                               '2022 • Negro Mate',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
-                              ),
+                              style: TextStyle(color: colors.onSurfaceVariant),
                             ),
                           ],
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.green.shade50,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Text(
-                          '✓ Todo en orden',
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                      _StatusBadge(label: 'Todo en orden', color: colors.primary),
                     ],
                   ),
-
                   const SizedBox(height: 16),
-
-                  // Placa
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
+                      border: Border.all(color: colors.outlineVariant),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(
-                          Icons.badge,
-                          size: 32,
-                        ),
-                        SizedBox(width: 12),
-                        Column(
+                        Icon(Icons.badge, size: 32, color: colors.primary),
+                        const SizedBox(width: 12),
+                        const Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -116,11 +76,8 @@ class MiVehiculoPage extends StatelessWidget {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 16),
-
-                  // Kilometraje y próximo servicio
-                  Row(
+                  const Row(
                     children: [
                       Expanded(
                         child: _InfoItem(
@@ -142,181 +99,50 @@ class MiVehiculoPage extends StatelessWidget {
               ),
             ),
           ),
-
           const SizedBox(height: 16),
-
-          // Accesos rápidos
           Card(
-            elevation: 2,
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 20,
-                horizontal: 8,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _QuickAction(
                     icon: Icons.build,
                     label: 'Mantenimiento',
-                    onTap: () {},
-                  ),
-                  _QuickAction(
-                    icon: Icons.local_gas_station,
-                    label: 'Consumo',
-                    onTap: () {},
-                  ),
-                  _QuickAction(
-                    icon: Icons.shield,
-                    label: 'Seguro',
-                    onTap: () {},
-                  ),
-                  _QuickAction(
-                    icon: Icons.description,
-                    label: 'Documentos',
-                    onTap: () {},
-                  ),
-                  _QuickAction(
-                    icon: Icons.warning,
-                    label: 'Alertas',
-                    onTap: () {},
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Información general
-          Card(
-            elevation: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Row(
-                    children: [
-                      Icon(Icons.info, color: Colors.green),
-                      SizedBox(width: 10),
-                      Text(
-                        'Información general',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const MantenimientoPage(),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _GeneralInfo(
-                          title: 'Tipo',
-                          value: 'Motocicleta',
-                        ),
-                      ),
-                      Expanded(
-                        child: _GeneralInfo(
-                          title: 'Cilindraje',
-                          value: '149 cc',
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _GeneralInfo(
-                          title: 'Transmisión',
-                          value: '5 velocidades',
-                        ),
-                      ),
-                      Expanded(
-                        child: _GeneralInfo(
-                          title: 'Combustible',
-                          value: 'Gasolina',
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Estado del vehículo
-          Card(
-            elevation: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Estado del vehículo',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 16),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _StatusItem(
-                          icon: Icons.settings,
-                          title: 'Motor',
-                          status: 'Óptimo',
-                          color: Colors.green,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _StatusItem(
-                          icon: Icons.tire_repair,
-                          title: 'Llantas',
-                          status: 'Óptimo',
-                          color: Colors.green,
-                        ),
-                      ),
-                    ],
+                  const _QuickAction(
+                    icon: Icons.local_gas_station,
+                    label: 'Consumo',
                   ),
-
-                  const SizedBox(height: 8),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _StatusItem(
-                          icon: Icons.disc_full,
-                          title: 'Frenos',
-                          status: 'Regular',
-                          color: Colors.orange,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _StatusItem(
-                          icon: Icons.battery_full,
-                          title: 'Batería',
-                          status: 'Óptimo',
-                          color: Colors.green,
-                        ),
-                      ),
-                    ],
+                  const _QuickAction(icon: Icons.shield, label: 'Seguro'),
+                  const _QuickAction(
+                    icon: Icons.description,
+                    label: 'Documentos',
+                  ),
+                  const _QuickAction(
+                    icon: Icons.warning_amber,
+                    label: 'Alertas',
                   ),
                 ],
               ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          _InformationCard(colors: colors),
+          const SizedBox(height: 16),
+          _VehicleStatusCard(colors: colors),
+          const SizedBox(height: 16),
+          Card(
+            child: ListTile(
+              leading: Icon(Icons.route, color: colors.primary),
+              title: const Text('Último viaje'),
+              subtitle: const Text('Centro → Chapinero · 8,4 km'),
+              trailing: const Icon(Icons.chevron_right),
             ),
           ),
         ],
@@ -325,38 +151,162 @@ class MiVehiculoPage extends StatelessWidget {
   }
 }
 
+class _InformationCard extends StatelessWidget {
+  const _InformationCard({required this.colors});
+  final ColorScheme colors;
+
+  @override
+  Widget build(BuildContext context) => Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.info_outline, color: colors.primary),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Información general',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Row(
+                children: [
+                  Expanded(
+                    child: _GeneralInfo(title: 'Tipo', value: 'Motocicleta'),
+                  ),
+                  Expanded(
+                    child: _GeneralInfo(title: 'Cilindraje', value: '149 cc'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              const Row(
+                children: [
+                  Expanded(
+                    child: _GeneralInfo(
+                      title: 'Transmisión',
+                      value: '5 velocidades',
+                    ),
+                  ),
+                  Expanded(
+                    child: _GeneralInfo(
+                      title: 'Combustible',
+                      value: 'Gasolina',
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+}
+
+class _VehicleStatusCard extends StatelessWidget {
+  const _VehicleStatusCard({required this.colors});
+  final ColorScheme colors;
+
+  @override
+  Widget build(BuildContext context) => Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Estado del vehículo',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _StatusItem(
+                      icon: Icons.settings,
+                      title: 'Motor',
+                      status: 'Óptimo',
+                      color: colors.primary,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _StatusItem(
+                      icon: Icons.tire_repair,
+                      title: 'Llantas',
+                      status: 'Óptimo',
+                      color: colors.primary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: _StatusItem(
+                      icon: Icons.disc_full,
+                      title: 'Frenos',
+                      status: 'Regular',
+                      color: colors.tertiary,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _StatusItem(
+                      icon: Icons.battery_full,
+                      title: 'Batería',
+                      status: 'Óptimo',
+                      color: colors.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+}
+
+class _StatusBadge extends StatelessWidget {
+  const _StatusBadge({required this.label, required this.color});
+  final String label;
+  final Color color;
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: .14),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          '✓ $label',
+          style: TextStyle(color: color, fontWeight: FontWeight.bold),
+        ),
+      );
+}
+
 class _InfoItem extends StatelessWidget {
+  const _InfoItem({required this.icon, required this.title, required this.subtitle});
   final IconData icon;
   final String title;
   final String subtitle;
-
-  const _InfoItem({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
-
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return Row(
       children: [
-        Icon(icon, color: Colors.green),
+        Icon(icon, color: colors.primary),
         const SizedBox(width: 8),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                subtitle,
-                style: const TextStyle(color: Colors.grey),
-              ),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(subtitle, style: TextStyle(color: colors.onSurfaceVariant)),
             ],
           ),
         ),
@@ -366,36 +316,25 @@ class _InfoItem extends StatelessWidget {
 }
 
 class _QuickAction extends StatelessWidget {
+  const _QuickAction({required this.icon, required this.label, this.onTap});
   final IconData icon;
   final String label;
-  final VoidCallback onTap;
-
-  const _QuickAction({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
+  final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return Expanded(
       child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
         child: Column(
           children: [
             CircleAvatar(
-              backgroundColor: Colors.green.shade50,
-              child: Icon(
-                icon,
-                color: Colors.green,
-              ),
+              backgroundColor: colors.primaryContainer,
+              child: Icon(icon, color: colors.onPrimaryContainer),
             ),
             const SizedBox(height: 6),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12),
-            ),
+            Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12)),
           ],
         ),
       ),
@@ -404,79 +343,41 @@ class _QuickAction extends StatelessWidget {
 }
 
 class _GeneralInfo extends StatelessWidget {
+  const _GeneralInfo({required this.title, required this.value});
   final String title;
   final String value;
-
-  const _GeneralInfo({
-    required this.title,
-    required this.value,
-  });
-
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            color: Colors.grey,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+          const SizedBox(height: 4),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
+        ],
+      );
 }
 
 class _StatusItem extends StatelessWidget {
+  const _StatusItem({required this.icon, required this.title, required this.status, required this.color});
   final IconData icon;
   final String title;
   final String status;
   final Color color;
-
-  const _StatusItem({
-    required this.icon,
-    required this.title,
-    required this.status,
-    required this.color,
-  });
-
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.grey.shade300,
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+          borderRadius: BorderRadius.circular(12),
         ),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            icon,
-            color: color,
-            size: 30,
-          ),
-          const SizedBox(height: 6),
-          Text(title),
-          const SizedBox(height: 4),
-          Text(
-            status,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 30),
+            const SizedBox(height: 6),
+            Text(title),
+            const SizedBox(height: 4),
+            Text(status, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      );
 }

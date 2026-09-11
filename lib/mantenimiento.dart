@@ -3,35 +3,17 @@ import 'package:flutter/material.dart';
 class MantenimientoPage extends StatelessWidget {
   const MantenimientoPage({super.key});
 
+  static const _services = [
+    MaintenanceItem('Cambio de aceite y filtro', 'Cada 3.000 km', 'Faltan 1.250 km', Icons.oil_barrel),
+    MaintenanceItem('Revisión de frenos', 'Cada 5.000 km', 'Faltan 2.000 km', Icons.disc_full),
+    MaintenanceItem('Cambio de llantas', 'Cada 15.000 km', 'Faltan 2.550 km', Icons.tire_repair),
+    MaintenanceItem('Revisión de batería', 'Cada 10.000 km', 'Faltan 4.500 km', Icons.battery_full),
+    MaintenanceItem('Cambio de filtros', 'Cada 6.000 km', 'Faltan 3.550 km', Icons.filter_alt),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    final mantenimientos = [
-      {
-        'titulo': 'Cambio de aceite y filtro',
-        'descripcion': 'Cada 3.000 km',
-        'kilometros': 'Faltan 1.250 km',
-        'icono': Icons.build,
-      },
-      {
-        'titulo': 'Revisión general',
-        'descripcion': 'Cada 6.000 km',
-        'kilometros': 'Faltan 3.550 km',
-        'icono': Icons.handyman,
-      },
-      {
-        'titulo': 'Revisión de frenos',
-        'descripcion': 'Cada 5.000 km',
-        'kilometros': 'Faltan 2.000 km',
-        'icono': Icons.disc_full,
-      },
-      {
-        'titulo': 'Revisión de batería',
-        'descripcion': 'Cada 10.000 km',
-        'kilometros': 'Faltan 4.500 km',
-        'icono': Icons.battery_full,
-      },
-    ];
-
+    final colors = Theme.of(context).colorScheme;
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -40,84 +22,47 @@ class MantenimientoPage extends StatelessWidget {
           centerTitle: true,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: () => Navigator.maybePop(context),
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.help_outline),
-              onPressed: () {},
-            ),
-          ],
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: 'Resumen'),
+              Tab(text: 'Próximos'),
+              Tab(text: 'Historial'),
+            ],
+          ),
         ),
         body: Column(
           children: [
-            // Información del vehículo
-            Padding(
+            Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(16),
+              color: colors.surfaceContainerHighest,
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.two_wheeler,
-                    size: 70,
-                  ),
+                  Icon(Icons.two_wheeler, size: 56, color: colors.primary),
                   const SizedBox(width: 16),
                   const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Yamaha FZ 2.0',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 6),
-                        Text(
-                          'ABC12D • 2022',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16,
-                          ),
-                        ),
+                        Text('Yamaha FZ 2.0', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                         SizedBox(height: 4),
-                        Text(
-                          '12.450 km',
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
+                        Text('ABC12D • 2022'),
+                        SizedBox(height: 4),
+                        Text('12.450 km'),
                       ],
                     ),
-                  ),
-                  OutlinedButton(
-                    onPressed: () {},
-                    child: const Text('Cambiar vehículo'),
                   ),
                 ],
               ),
             ),
-
-            const TabBar(
-              tabs: [
-                Tab(text: 'Resumen'),
-                Tab(text: 'Próximos servicios'),
-                Tab(text: 'Historial'),
-              ],
-            ),
-
             Expanded(
               child: TabBarView(
                 children: [
-                  _ResumenMantenimiento(
-                    mantenimientos: mantenimientos,
-                  ),
-                  _ProximosServicios(
-                    mantenimientos: mantenimientos,
-                  ),
-                  const _HistorialMantenimiento(),
+                  _SummaryTab(services: _services),
+                  _ServicesList(services: _services),
+                  const _HistoryTab(),
                 ],
               ),
             ),
@@ -128,259 +73,102 @@ class MantenimientoPage extends StatelessWidget {
   }
 }
 
-class _ResumenMantenimiento extends StatelessWidget {
-  final List<Map<String, dynamic>> mantenimientos;
+class MaintenanceItem {
+  const MaintenanceItem(this.title, this.frequency, this.remaining, this.icon);
+  final String title;
+  final String frequency;
+  final String remaining;
+  final IconData icon;
+}
 
-  const _ResumenMantenimiento({
-    required this.mantenimientos,
-  });
+class _SummaryTab extends StatelessWidget {
+  const _SummaryTab({required this.services});
+  final List<MaintenanceItem> services;
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        // Próximo servicio
         Card(
-          color: Colors.green.shade50,
+          color: colors.primaryContainer,
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                const Icon(
-                  Icons.event_available,
-                  color: Colors.green,
-                  size: 45,
-                ),
+                Icon(Icons.event_available, size: 42, color: colors.onPrimaryContainer),
                 const SizedBox(width: 16),
                 const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Próximo servicio recomendado',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 16,
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        '15 de marzo de 2025',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Text('Próximo mantenimiento', style: TextStyle(fontWeight: FontWeight.bold)),
+                      SizedBox(height: 4),
+                      Text('Cambio de aceite y filtro'),
                       SizedBox(height: 4),
                       Text('Faltan 1.250 km o 28 días'),
                     ],
                   ),
                 ),
-                OutlinedButton(
-                  onPressed: () {},
-                  child: const Text('Ver detalles'),
-                ),
               ],
             ),
           ),
         ),
-
         const SizedBox(height: 16),
-
-        // Estadísticas
-       Row(
-  children: [
-    Expanded(
-      child: _StatisticCard(
-        title: 'Kilometraje actual',
-        value: '12.450 km',
-        icon: Icons.speed,
-      ),
-    ),
-    const SizedBox(width: 8),
-    Expanded(
-      child: _StatisticCard(
-        title: 'Último servicio',
-        value: '20 dic 2024',
-        icon: Icons.calendar_month,
-      ),
-    ),
-  ],
-),
-
+        Text('Estado general', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
-
-        Row(
-          children: [
-            Expanded(
-              child: _StatisticCard(
-                title: 'Servicios realizados',
-                value: '5',
-                icon: Icons.build,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _StatisticCard(
-                title: 'Gasto total',
-                value: '\$850.000',
-                icon: Icons.attach_money,
-              ),
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 16),
-
-        // Estado general
         Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Estado general',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Tu moto se encuentra en buen estado.',
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-                const Divider(),
-
-                _EstadoRow(
-                  icon: Icons.settings,
-                  titulo: 'Motor',
-                  estado: 'Óptimo',
-                  color: Colors.green,
-                ),
-                _EstadoRow(
-                  icon: Icons.tire_repair,
-                  titulo: 'Llantas',
-                  estado: 'Óptimo',
-                  color: Colors.green,
-                ),
-                _EstadoRow(
-                  icon: Icons.disc_full,
-                  titulo: 'Frenos',
-                  estado: 'Regular',
-                  color: Colors.orange,
-                ),
-                _EstadoRow(
-                  icon: Icons.battery_full,
-                  titulo: 'Batería',
-                  estado: 'Óptimo',
-                  color: Colors.green,
-                ),
-              ],
-            ),
+          child: Column(
+            children: [
+              _StateRow(icon: Icons.settings, label: 'Motor', status: 'Óptimo', color: colors.primary),
+              const Divider(height: 1),
+              _StateRow(icon: Icons.tire_repair, label: 'Llantas', status: 'Óptimo', color: colors.primary),
+              const Divider(height: 1),
+              _StateRow(icon: Icons.disc_full, label: 'Frenos', status: 'Revisar', color: colors.tertiary),
+              const Divider(height: 1),
+              _StateRow(icon: Icons.battery_full, label: 'Batería', status: 'Óptimo', color: colors.primary),
+            ],
           ),
         ),
-
         const SizedBox(height: 16),
-
-        const Text(
-          'Próximos servicios',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-
+        Text('Próximos servicios', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
-
-        // LISTVIEW.BUILDER
-        SizedBox(
-          height: 350,
-          child: ListView.builder(
-            itemCount: mantenimientos.length,
-            itemBuilder: (context, index) {
-              final mantenimiento = mantenimientos[index];
-
-              return Card(
-                margin: const EdgeInsets.only(bottom: 10),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.green.shade50,
-                    child: Icon(
-                      mantenimiento['icono'] as IconData,
-                      color: Colors.green,
-                    ),
-                  ),
-                  title: Text(
-                    mantenimiento['titulo'] as String,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Text(
-                    mantenimiento['descripcion'] as String,
-                  ),
-                  trailing: Text(
-                    mantenimiento['kilometros'] as String,
-                    style: const TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
+        SizedBox(height: 370, child: _ServicesList(services: services, shrinkWrap: true)),
       ],
     );
   }
 }
 
-class _ProximosServicios extends StatelessWidget {
-  final List<Map<String, dynamic>> mantenimientos;
-
-  const _ProximosServicios({
-    required this.mantenimientos,
-  });
+class _ServicesList extends StatelessWidget {
+  const _ServicesList({required this.services, this.shrinkWrap = false});
+  final List<MaintenanceItem> services;
+  final bool shrinkWrap;
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: mantenimientos.length,
+      padding: const EdgeInsets.all(4),
+      shrinkWrap: shrinkWrap,
+      physics: shrinkWrap ? const NeverScrollableScrollPhysics() : null,
+      itemCount: services.length,
       itemBuilder: (context, index) {
-        final item = mantenimientos[index];
-
+        final service = services[index];
         return Card(
-          margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
-            contentPadding: const EdgeInsets.all(12),
             leading: CircleAvatar(
-              backgroundColor: Colors.green.shade50,
-              child: Icon(
-                item['icono'] as IconData,
-                color: Colors.green,
-              ),
+              backgroundColor: colors.primaryContainer,
+              child: Icon(service.icon, color: colors.onPrimaryContainer),
             ),
-            title: Text(
-              item['titulo'] as String,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            subtitle: Text(
-              item['descripcion'] as String,
-            ),
-            trailing: Text(
-              item['kilometros'] as String,
-              style: const TextStyle(
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
+            title: Text(service.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(service.frequency),
+            trailing: SizedBox(
+              width: 88,
+              child: Text(
+                service.remaining,
+                textAlign: TextAlign.end,
+                style: TextStyle(color: colors.primary, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -390,125 +178,43 @@ class _ProximosServicios extends StatelessWidget {
   }
 }
 
-class _HistorialMantenimiento extends StatelessWidget {
-  const _HistorialMantenimiento();
+class _HistoryTab extends StatelessWidget {
+  const _HistoryTab();
+  static const _history = [
+    '20 dic 2024 · Cambio de aceite',
+    '15 nov 2024 · Revisión de frenos',
+    '10 sep 2024 · Revisión general',
+    '05 jul 2024 · Cambio de filtros',
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final historial = [
-      '20 dic 2024 - Cambio de aceite',
-      '15 nov 2024 - Revisión de frenos',
-      '10 sep 2024 - Revisión general',
-      '05 jul 2024 - Cambio de filtro',
-    ];
-
+    final colors = Theme.of(context).colorScheme;
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: historial.length,
-      itemBuilder: (context, index) {
-        return Card(
-          child: ListTile(
-            leading: const Icon(
-              Icons.check_circle,
-              color: Colors.green,
-            ),
-            title: Text(historial[index]),
-            trailing: const Icon(Icons.chevron_right),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _StatisticCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final IconData icon;
-
-  const _StatisticCard({
-    required this.title,
-    required this.value,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          children: [
-            Icon(
-              icon,
-              color: Colors.green,
-              size: 32,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 6),
-            FittedBox(
-              child: Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
+      itemCount: _history.length,
+      itemBuilder: (context, index) => Card(
+        child: ListTile(
+          leading: Icon(Icons.check_circle, color: colors.primary),
+          title: Text(_history[index]),
+          trailing: const Icon(Icons.chevron_right),
         ),
       ),
     );
   }
 }
 
-class _EstadoRow extends StatelessWidget {
+class _StateRow extends StatelessWidget {
+  const _StateRow({required this.icon, required this.label, required this.status, required this.color});
   final IconData icon;
-  final String titulo;
-  final String estado;
+  final String label;
+  final String status;
   final Color color;
 
-  const _EstadoRow({
-    required this.icon,
-    required this.titulo,
-    required this.estado,
-    required this.color,
-  });
-
   @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Icon(
-        icon,
-        color: color,
-      ),
-      title: Text(titulo),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            estado,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Icon(
-            Icons.check_circle,
-            color: color,
-            size: 20,
-          ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => ListTile(
+        leading: Icon(icon, color: color),
+        title: Text(label),
+        trailing: Text(status, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+      );
 }
