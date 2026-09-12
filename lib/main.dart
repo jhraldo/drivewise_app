@@ -4,199 +4,641 @@ void main() {
   runApp(const MainApp());
 }
 
-class MainApp extends StatelessWidget {
+// ============================================================
+// MAIN APP
+// ============================================================
+//
+// MainApp controla la configuración general de DriveWise.
+// Aquí se manejan el tema claro, el tema oscuro y el modo
+// seleccionado por el usuario.
+//
+// La aplicación utiliza Material 3 y mantiene una identidad
+// visual basada principalmente en verde, blanco y azul marino.
+// ============================================================
+
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  // Por defecto la aplicación inicia utilizando el tema claro.
+  ThemeMode _themeMode = ThemeMode.light;
+
+  // Cambia entre el tema claro y el tema oscuro.
+  void _cambiarTema(bool temaOscuro) {
+    setState(() {
+      _themeMode = temaOscuro ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'DriveWise',
+
+      // ========================================================
+      // TEMA CLARO
+      // ========================================================
+
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-        ),
         useMaterial3: true,
+
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF16A34A),
+          brightness: Brightness.light,
+        ).copyWith(
+          primary: const Color(0xFF16A34A),
+          onPrimary: Colors.white,
+          secondary: const Color(0xFF15803D),
+          surface: const Color(0xFFF7F9F7),
+          onSurface: const Color(0xFF172017),
+          outline: const Color(0xFFD7DED7),
+        ),
+
+        scaffoldBackgroundColor: const Color(0xFFF7F9F7),
+
+        cardTheme: const CardThemeData(
+          color: Colors.white,
+          elevation: 0,
+          margin: EdgeInsets.zero,
+        ),
+
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          foregroundColor: Color(0xFF172017),
+          elevation: 0,
+          surfaceTintColor: Colors.transparent,
+        ),
+
+        dividerTheme: const DividerThemeData(
+          color: Color(0xFFE1E7E1),
+          thickness: 1,
+          space: 1,
+        ),
+
+        switchTheme: SwitchThemeData(
+          thumbColor: WidgetStateProperty.resolveWith<Color?>(
+            (states) {
+              if (states.contains(WidgetState.selected)) {
+                return Colors.white;
+              }
+
+              return const Color(0xFF6B7280);
+            },
+          ),
+          trackColor: WidgetStateProperty.resolveWith<Color?>(
+            (states) {
+              if (states.contains(WidgetState.selected)) {
+                return const Color(0xFF16A34A);
+              }
+
+              return const Color(0xFFE5E7EB);
+            },
+          ),
+        ),
       ),
-      home: const DashboardPage(),
+
+      // ========================================================
+      // TEMA OSCURO
+      // ========================================================
+
+      darkTheme: ThemeData(
+        useMaterial3: true,
+
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF16A34A),
+          brightness: Brightness.dark,
+        ).copyWith(
+          primary: const Color(0xFF16A34A),
+          onPrimary: Colors.white,
+          secondary: const Color(0xFF22C55E),
+          surface: const Color(0xFF0F172A),
+          onSurface: const Color(0xFFF8FAFC),
+          outline: const Color(0xFF334155),
+        ),
+
+        scaffoldBackgroundColor: const Color(0xFF0F172A),
+
+        cardTheme: const CardThemeData(
+          color: Color(0xFF172033),
+          elevation: 0,
+          margin: EdgeInsets.zero,
+        ),
+
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF0F172A),
+          foregroundColor: Color(0xFFF8FAFC),
+          elevation: 0,
+          surfaceTintColor: Colors.transparent,
+        ),
+
+        dividerTheme: const DividerThemeData(
+          color: Color(0xFF293548),
+          thickness: 1,
+          space: 1,
+        ),
+
+        switchTheme: SwitchThemeData(
+          thumbColor: WidgetStateProperty.resolveWith<Color?>(
+            (states) {
+              if (states.contains(WidgetState.selected)) {
+                return Colors.white;
+              }
+
+              return const Color(0xFF94A3B8);
+            },
+          ),
+          trackColor: WidgetStateProperty.resolveWith<Color?>(
+            (states) {
+              if (states.contains(WidgetState.selected)) {
+                return const Color(0xFF16A34A);
+              }
+
+              return const Color(0xFF334155);
+            },
+          ),
+        ),
+      ),
+
+      // Permite cambiar entre los dos temas desde la aplicación.
+      themeMode: _themeMode,
+
+      home: DashboardPage(
+        temaOscuro: _themeMode == ThemeMode.dark,
+        onCambiarTema: _cambiarTema,
+      ),
     );
   }
 }
 
+// ============================================================
+// DASHBOARD
+// ============================================================
+//
+// Pantalla principal de DriveWise.
+//
+// El dashboard está organizado en bloques visuales para que el
+// usuario pueda identificar rápidamente:
+//
+// 1. Su vehículo.
+// 2. El estado general.
+// 3. Los pendientes.
+// 4. Los próximos recordatorios.
+//
+// La pantalla utiliza ListView para evitar desbordamientos.
+// ============================================================
+
 class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+  final bool temaOscuro;
+  final ValueChanged<bool> onCambiarTema;
+
+  const DashboardPage({
+    super.key,
+    required this.temaOscuro,
+    required this.onCambiarTema,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('DriveWise'),
-        centerTitle: false,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: ListView(
+        titleSpacing: 20,
+        title: Row(
           children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: colors.primary,
+                borderRadius: BorderRadius.circular(11),
+              ),
+              child: const Icon(
+                Icons.directions_car_rounded,
+                color: Colors.white,
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: 11),
+            const Text(
+              'DriveWise',
+              style: TextStyle(
+                fontSize: 21,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.3,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          // ====================================================
+          // CAMBIO DE TEMA
+          // ====================================================
+
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Container(
+              height: 42,
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              decoration: BoxDecoration(
+                color: temaOscuro
+                    ? const Color(0xFF172033)
+                    : const Color(0xFFF0F3F0),
+                borderRadius: BorderRadius.circular(22),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    temaOscuro
+                        ? Icons.dark_mode_rounded
+                        : Icons.light_mode_rounded,
+                    size: 20,
+                    color: temaOscuro
+                        ? const Color(0xFFF8FAFC)
+                        : const Color(0xFF475569),
+                  ),
+                  const SizedBox(width: 2),
+                  Switch(
+                    value: temaOscuro,
+                    onChanged: onCambiarTema,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 32),
+          children: [
+            // ==================================================
+            // ENCABEZADO
+            // ==================================================
+
             Text(
               'Hola, Santiago',
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.7,
+              ),
             ),
-            const SizedBox(height: 8),
+
+            const SizedBox(height: 6),
+
             Text(
               'Gestiona toda la información de tu vehículo desde un solo lugar.',
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: colors.onSurfaceVariant,
+                height: 1.45,
+              ),
             ),
-            const SizedBox(height: 24),
-           Card(
-  child: Padding(
-    padding: const EdgeInsets.all(20),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+
+            const SizedBox(height: 22),
+
+            // ==================================================
+            // VEHÍCULO PRINCIPAL
+            // ==================================================
+
+            _buildVehicleCard(
+              context,
+              theme,
+              colors,
+            ),
+
+            const SizedBox(height: 25),
+
+            // ==================================================
+            // ESTADO DEL VEHÍCULO
+            // ==================================================
+
+            _buildSectionHeader(
+              context,
+              title: 'Estado del vehículo',
+              subtitle: 'Resumen del estado actual',
+            ),
+
+            const SizedBox(height: 12),
+
+            _buildVehicleStatusCard(
+              context,
+              theme,
+              colors,
+            ),
+
+            const SizedBox(height: 25),
+
+            // ==================================================
+            // RESUMEN
+            // ==================================================
+
+            _buildSectionHeader(
+              context,
+              title: 'Resumen',
+              subtitle: 'Lo que requiere tu atención',
+            ),
+
+            const SizedBox(height: 12),
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: SummaryCard(
+                    icon: Icons.build_circle_outlined,
+                    title: 'Mantenimiento',
+                    value: '2 pendientes',
+                    accentColor: colors.primary,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: SummaryCard(
+                    icon: Icons.notifications_active_outlined,
+                    title: 'Recordatorios',
+                    value: '3 activos',
+                    accentColor: const Color(0xFF3B82F6),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 25),
+
+            // ==================================================
+            // PRÓXIMOS RECORDATORIOS
+            // ==================================================
+
+            _buildSectionHeader(
+              context,
+              title: 'Próximos recordatorios',
+              subtitle: 'No olvides estas tareas',
+            ),
+
+            const SizedBox(height: 12),
+
+            const ReminderCard(
+              icon: Icons.oil_barrel_outlined,
+              title: 'Cambio de aceite',
+              description: 'Programado para los próximos 1.200 km',
+              tag: '1.200 km',
+            ),
+
+            const SizedBox(height: 10),
+
+            const ReminderCard(
+              icon: Icons.build_circle_outlined,
+              title: 'Revisión técnico-mecánica',
+              description: 'Pendiente para el próximo mes',
+              tag: 'Próximo mes',
+            ),
+
+            const SizedBox(height: 10),
+
+            const ReminderCard(
+              icon: Icons.description_outlined,
+              title: 'Documentos del vehículo',
+              description: 'Revisar vencimiento del seguro',
+              tag: 'Revisar',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ==========================================================
+  // ENCABEZADO DE SECCIÓN
+  // ==========================================================
+
+  Widget _buildSectionHeader(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+  }) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Row(
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.2,
+                ),
+              ),
+              const SizedBox(height: 3),
+              Text(
+                subtitle,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ==========================================================
+  // TARJETA DEL VEHÍCULO
+  // ==========================================================
+
+  Widget _buildVehicleCard(
+    BuildContext context,
+    ThemeData theme,
+    ColorScheme colors,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.primary,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: colors.primary.withValues(alpha: 0.18),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(
-              Icons.directions_car,
-              size: 48,
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    'Mi vehículo',
+            // --------------------------------------------------
+            // CABECERA DE VEHÍCULO
+            // --------------------------------------------------
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: 58,
+                  height: 58,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(17),
+                  ),
+                  child: const Icon(
+                    Icons.directions_car_rounded,
+                    color: Colors.white,
+                    size: 31,
+                  ),
+                ),
+
+                const SizedBox(width: 14),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Mi vehículo',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        'Mazda 3 Touring',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: Colors.white.withValues(alpha: 0.85),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.16),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Text(
+                    'ABC 123',
                     style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
                     ),
                   ),
-                  SizedBox(height: 4),
-                  Text('Información principal del vehículo'),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            // --------------------------------------------------
+            // DATOS DEL VEHÍCULO
+            // --------------------------------------------------
+
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 15,
+                vertical: 14,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _VehicleMiniData(
+                      icon: Icons.speed_rounded,
+                      label: 'Kilometraje',
+                      value: '42.580 km',
+                    ),
+                  ),
+
+                  Container(
+                    width: 1,
+                    height: 42,
+                    color: Colors.white.withValues(alpha: 0.20),
+                  ),
+
+                  Expanded(
+                    child: _VehicleMiniData(
+                      icon: Icons.calendar_today_rounded,
+                      label: 'Año',
+                      value: '2024',
+                    ),
+                  ),
                 ],
               ),
             ),
           ],
         ),
-        const SizedBox(height: 20),
-        const Divider(),
-        const SizedBox(height: 12),
-        const VehicleInfoRow(
-          icon: Icons.directions_car_filled_outlined,
-          label: 'Vehículo',
-          value: 'Mazda 3 Touring',
-        ),
-        const SizedBox(height: 12),
-        const VehicleInfoRow(
-          icon: Icons.pin_outlined,
-          label: 'Placa',
-          value: 'ABC 123',
-        ),
-        const SizedBox(height: 12),
-        const VehicleInfoRow(
-          icon: Icons.speed_outlined,
-          label: 'Kilometraje',
-          value: '42.580 km',
-        ),
-        const SizedBox(height: 12),
-        const VehicleInfoRow(
-          icon: Icons.calendar_today_outlined,
-          label: 'Año',
-          value: '2024',
-        ),
-      ],
-    ),
-  ),
-),
-const SizedBox(height: 24),
-Text(
-  'Estado del vehículo',
-  style: Theme.of(context).textTheme.titleLarge,
-),
+      ),
+    );
+  }
 
-const SizedBox(height: 12),
+  // ==========================================================
+  // TARJETA DE ESTADO
+  // ==========================================================
 
-const Card(
-  child: Padding(
-    padding: EdgeInsets.all(16),
-    child: Column(
-      children: [
-        VehicleStatusRow(
-          icon: Icons.check_circle_outline,
-          title: 'Motor',
-          status: 'En buen estado',
+  Widget _buildVehicleStatusCard(
+    BuildContext context,
+    ThemeData theme,
+    ColorScheme colors,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.cardTheme.color,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: colors.outline.withValues(alpha: 0.65),
         ),
-        Divider(),
-        VehicleStatusRow(
-          icon: Icons.battery_charging_full,
-          title: 'Batería',
-          status: 'Nivel óptimo',
-        ),
-        Divider(),
-        VehicleStatusRow(
-          icon: Icons.tire_repair,
-          title: 'Neumáticos',
-          status: 'Revisión recomendada',
-        ),
-      ],
-    ),
-  ),
-),
-            const SizedBox(height: 24),
-            Text(
-              'Resumen',
-              style: Theme.of(context).textTheme.titleLarge,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          children: [
+            VehicleStatusRow(
+              icon: Icons.check_circle_outline_rounded,
+              title: 'Motor',
+              status: 'En buen estado',
+              statusColor: colors.primary,
             ),
-            const SizedBox(height: 12),
-            const Row(
-              children: [
-                Expanded(
-                  child: SummaryCard(
-                    icon: Icons.build_outlined,
-                    title: 'Mantenimiento',
-                    value: '2 pendientes',
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: SummaryCard(
-                    icon: Icons.notifications_outlined,
-                    title: 'Recordatorios',
-                    value: '3 activos',
-                  ),
-                ),
-              ],
+
+            const Divider(height: 20),
+
+            VehicleStatusRow(
+              icon: Icons.battery_charging_full_rounded,
+              title: 'Batería',
+              status: 'Nivel óptimo',
+              statusColor: colors.primary,
             ),
-            const SizedBox(height: 24),
 
-Text(
-  'Próximos recordatorios',
-  style: Theme.of(context).textTheme.titleLarge,
-),
+            const Divider(height: 20),
 
-const SizedBox(height: 12),
-
-const ReminderCard(
-  icon: Icons.oil_barrel_outlined,
-  title: 'Cambio de aceite',
-  description: 'Programado para los próximos 1.200 km',
-),
-
-const SizedBox(height: 12),
-
-const ReminderCard(
-  icon: Icons.build_circle_outlined,
-  title: 'Revisión técnico-mecánica',
-  description: 'Pendiente para el próximo mes',
-),
-
-const SizedBox(height: 12),
-
-const ReminderCard(
-  icon: Icons.description_outlined,
-  title: 'Documentos del vehículo',
-  description: 'Revisar vencimiento del seguro',
-),
+            VehicleStatusRow(
+              icon: Icons.tire_repair_rounded,
+              title: 'Neumáticos',
+              status: 'Revisión recomendada',
+              statusColor: const Color(0xFFD97706),
+            ),
           ],
         ),
       ),
@@ -204,40 +646,166 @@ const ReminderCard(
   }
 }
 
+// ============================================================
+// MINI DATO DEL VEHÍCULO
+// ============================================================
+//
+// Componente utilizado dentro de la tarjeta principal para
+// presentar información puntual sin crear una tarjeta adicional.
+// ============================================================
+
+class _VehicleMiniData extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _VehicleMiniData({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          color: Colors.white.withValues(alpha: 0.90),
+          size: 20,
+        ),
+        const SizedBox(width: 9),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.70),
+                  fontSize: 11,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ============================================================
+// SUMMARY CARD
+// ============================================================
+//
+// Tarjeta pequeña para información resumida.
+//
+// A diferencia de la versión anterior, esta tarjeta tiene una
+// altura contenida y utiliza el color como acento, evitando que
+// toda la pantalla se convierta en grandes bloques verdes.
+// ============================================================
+
 class SummaryCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String value;
+  final Color? accentColor;
 
   const SummaryCard({
     super.key,
     required this.icon,
     required this.title,
     required this.value,
+    this.accentColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final accent = accentColor ?? colors.primary;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.cardTheme.color,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: colors.outline.withValues(alpha: 0.65),
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon),
-            const SizedBox(height: 16),
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: accent.withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: accent,
+                    size: 22,
+                  ),
+                ),
+                const Spacer(),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: colors.onSurfaceVariant,
+                  size: 20,
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 14),
+
             Text(
               title,
-              style: Theme.of(context).textTheme.titleMedium,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colors.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-            const SizedBox(height: 4),
-            Text(value),
+
+            const SizedBox(height: 5),
+
+            Text(
+              value,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
+
+// ============================================================
+// VEHICLE INFO ROW
+// ============================================================
+//
+// Fila utilizada para mostrar un dato del vehículo.
+//
+// Se conserva como componente independiente para mantener la
+// estructura original del proyecto y facilitar su reutilización.
+// ============================================================
+
 class VehicleInfoRow extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -252,82 +820,272 @@ class VehicleInfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     return Row(
       children: [
-        Icon(icon),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(label),
+        Container(
+          width: 34,
+          height: 34,
+          decoration: BoxDecoration(
+            color: colors.primary.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            icon,
+            color: colors.primary,
+            size: 19,
+          ),
         ),
-        Text(
-          value,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
+
+        const SizedBox(width: 12),
+
+        Expanded(
+          child: Text(
+            label,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colors.onSurfaceVariant,
+            ),
+          ),
+        ),
+
+        const SizedBox(width: 12),
+
+        Flexible(
+          child: Text(
+            value,
+            textAlign: TextAlign.end,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
       ],
     );
   }
 }
+
+// ============================================================
+// VEHICLE STATUS ROW
+// ============================================================
+//
+// Fila utilizada para mostrar el estado de una parte concreta
+// del vehículo.
+//
+// El color del estado permite distinguir rápidamente entre
+// elementos correctos y elementos que requieren atención.
+// ============================================================
+
 class VehicleStatusRow extends StatelessWidget {
   final IconData icon;
   final String title;
   final String status;
+  final Color? statusColor;
 
   const VehicleStatusRow({
     super.key,
     required this.icon,
     required this.title,
     required this.status,
+    this.statusColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    final Color effectiveStatusColor =
+        statusColor ?? colors.onSurfaceVariant;
+
     return Row(
       children: [
-        Icon(icon),
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: effectiveStatusColor.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            icon,
+            color: effectiveStatusColor,
+            size: 20,
+          ),
+        ),
+
         const SizedBox(width: 12),
+
         Expanded(
           child: Text(
             title,
-            style: const TextStyle(
+            style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
         ),
-        Text(
-          status,
-          style: Theme.of(context).textTheme.bodyMedium,
+
+        const SizedBox(width: 10),
+
+        Flexible(
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 6,
+            ),
+            decoration: BoxDecoration(
+              color: effectiveStatusColor.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(9),
+            ),
+            child: Text(
+              status,
+              textAlign: TextAlign.end,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: effectiveStatusColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
         ),
       ],
     );
   }
 }
+
+// ============================================================
+// REMINDER CARD
+// ============================================================
+//
+// Tarjeta utilizada para mostrar un próximo recordatorio.
+//
+// Se mantiene la información original, pero ahora se presenta
+// como una fila compacta con icono, descripción y etiqueta.
+// ============================================================
+
 class ReminderCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String description;
+  final String tag;
 
   const ReminderCard({
     super.key,
     required this.icon,
-    required this.title,
     required this.description,
+    required this.title,
+    required this.tag,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        leading: Icon(icon),
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.cardTheme.color,
+        borderRadius: BorderRadius.circular(17),
+        border: Border.all(
+          color: colors.outline.withValues(alpha: 0.65),
         ),
-        subtitle: Text(description),
-        trailing: const Icon(Icons.chevron_right),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // --------------------------------------------------
+            // ICONO
+            // --------------------------------------------------
+
+            Container(
+              width: 45,
+              height: 45,
+              decoration: BoxDecoration(
+                color: colors.primary.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(13),
+              ),
+              child: Icon(
+                icon,
+                color: colors.primary,
+                size: 23,
+              ),
+            ),
+
+            const SizedBox(width: 13),
+
+            // --------------------------------------------------
+            // INFORMACIÓN
+            // --------------------------------------------------
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+
+                  const SizedBox(height: 4),
+
+                  Text(
+                    description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colors.onSurfaceVariant,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(width: 10),
+
+            // --------------------------------------------------
+            // ETIQUETA
+            // --------------------------------------------------
+
+            Container(
+              constraints: const BoxConstraints(
+                maxWidth: 92,
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: 6,
+              ),
+              decoration: BoxDecoration(
+                color: colors.primary.withValues(alpha: 0.09),
+                borderRadius: BorderRadius.circular(9),
+              ),
+              child: Text(
+                tag,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: colors.primary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+
+            const SizedBox(width: 4),
+
+            Icon(
+              Icons.chevron_right_rounded,
+              color: colors.onSurfaceVariant,
+              size: 20,
+            ),
+          ],
+        ),
       ),
     );
   }
