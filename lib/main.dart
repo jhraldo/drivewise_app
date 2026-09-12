@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'mi_vehiculo.dart';
 import 'widgets/reminder_card.dart';
 import 'widgets/summary_card.dart';
 import 'widgets/vehicle_status_row.dart';
@@ -50,7 +51,6 @@ class _MainAppState extends State<MainApp> {
 
       theme: ThemeData(
         useMaterial3: true,
-
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF16A34A),
           brightness: Brightness.light,
@@ -62,28 +62,23 @@ class _MainAppState extends State<MainApp> {
           onSurface: const Color(0xFF172017),
           outline: const Color(0xFFD7DED7),
         ),
-
         scaffoldBackgroundColor: const Color(0xFFF7F9F7),
-
         cardTheme: const CardThemeData(
           color: Colors.white,
           elevation: 0,
           margin: EdgeInsets.zero,
         ),
-
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           foregroundColor: Color(0xFF172017),
           elevation: 0,
           surfaceTintColor: Colors.transparent,
         ),
-
         dividerTheme: const DividerThemeData(
           color: Color(0xFFE1E7E1),
           thickness: 1,
           space: 1,
         ),
-
         switchTheme: SwitchThemeData(
           thumbColor: WidgetStateProperty.resolveWith<Color?>(
             (states) {
@@ -112,7 +107,6 @@ class _MainAppState extends State<MainApp> {
 
       darkTheme: ThemeData(
         useMaterial3: true,
-
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF16A34A),
           brightness: Brightness.dark,
@@ -124,28 +118,23 @@ class _MainAppState extends State<MainApp> {
           onSurface: const Color(0xFFF8FAFC),
           outline: const Color(0xFF334155),
         ),
-
         scaffoldBackgroundColor: const Color(0xFF0F172A),
-
         cardTheme: const CardThemeData(
           color: Color(0xFF172033),
           elevation: 0,
           margin: EdgeInsets.zero,
         ),
-
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF0F172A),
           foregroundColor: Color(0xFFF8FAFC),
           elevation: 0,
           surfaceTintColor: Colors.transparent,
         ),
-
         dividerTheme: const DividerThemeData(
           color: Color(0xFF293548),
           thickness: 1,
           space: 1,
         ),
-
         switchTheme: SwitchThemeData(
           thumbColor: WidgetStateProperty.resolveWith<Color?>(
             (states) {
@@ -467,131 +456,136 @@ class DashboardPage extends StatelessWidget {
     ThemeData theme,
     ColorScheme colors,
   ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.primary,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            color: colors.primary.withValues(alpha: 0.18),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const MiVehiculoPage(),
           ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // --------------------------------------------------
-            // CABECERA DE VEHÍCULO
-            // --------------------------------------------------
-
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: 58,
-                  height: 58,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.18),
-                    borderRadius: BorderRadius.circular(17),
-                  ),
-                  child: const Icon(
-                    Icons.directions_car_rounded,
-                    color: Colors.white,
-                    size: 31,
-                  ),
-                ),
-
-                const SizedBox(width: 14),
-
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Mi vehículo',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        'Mazda 3 Touring',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.85),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 7,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.16),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Text(
-                    'ABC 123',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: colors.primary,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: colors.primary.withValues(alpha: 0.18),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
             ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // --------------------------------------------------
+              // CABECERA DE VEHÍCULO
+              // --------------------------------------------------
 
-            const SizedBox(height: 20),
-
-            // --------------------------------------------------
-            // DATOS DEL VEHÍCULO
-            // --------------------------------------------------
-
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 15,
-                vertical: 14,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Row(
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: _VehicleMiniData(
-                      icon: Icons.speed_rounded,
-                      label: 'Kilometraje',
-                      value: '42.580 km',
+                  Container(
+                    width: 58,
+                    height: 58,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(17),
+                    ),
+                    child: const Icon(
+                      Icons.directions_car_rounded,
+                      color: Colors.white,
+                      size: 31,
                     ),
                   ),
-
-                  Container(
-                    width: 1,
-                    height: 42,
-                    color: Colors.white.withValues(alpha: 0.20),
-                  ),
-
+                  const SizedBox(width: 14),
                   Expanded(
-                    child: _VehicleMiniData(
-                      icon: Icons.calendar_today_rounded,
-                      label: 'Año',
-                      value: '2024',
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Mi vehículo',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          'Mazda 3 Touring',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: Colors.white.withValues(alpha: 0.85),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 7,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.16),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Text(
+                      'ABC 123',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
+
+              const SizedBox(height: 20),
+
+              // --------------------------------------------------
+              // DATOS DEL VEHÍCULO
+              // --------------------------------------------------
+
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15,
+                  vertical: 14,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _VehicleMiniData(
+                        icon: Icons.speed_rounded,
+                        label: 'Kilometraje',
+                        value: '42.580 km',
+                      ),
+                    ),
+                    Container(
+                      width: 1,
+                      height: 42,
+                      color: Colors.white.withValues(alpha: 0.20),
+                    ),
+                    Expanded(
+                      child: _VehicleMiniData(
+                        icon: Icons.calendar_today_rounded,
+                        label: 'Año',
+                        value: '2024',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -624,18 +618,14 @@ class DashboardPage extends StatelessWidget {
               status: 'En buen estado',
               statusColor: colors.primary,
             ),
-
             const Divider(height: 20),
-
             VehicleStatusRow(
               icon: Icons.battery_charging_full_rounded,
               title: 'Batería',
               status: 'Nivel óptimo',
               statusColor: colors.primary,
             ),
-
             const Divider(height: 20),
-
             VehicleStatusRow(
               icon: Icons.tire_repair_rounded,
               title: 'Neumáticos',
@@ -677,9 +667,7 @@ class _VehicleMiniData extends StatelessWidget {
           color: Colors.white.withValues(alpha: 0.90),
           size: 20,
         ),
-
         const SizedBox(width: 9),
-
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -750,9 +738,7 @@ class VehicleInfoRow extends StatelessWidget {
             size: 19,
           ),
         ),
-
         const SizedBox(width: 12),
-
         Expanded(
           child: Text(
             label,
@@ -761,9 +747,7 @@ class VehicleInfoRow extends StatelessWidget {
             ),
           ),
         ),
-
         const SizedBox(width: 12),
-
         Flexible(
           child: Text(
             value,
