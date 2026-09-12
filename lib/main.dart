@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'widgets/reminder_card.dart';
+import 'widgets/summary_card.dart';
+import 'widgets/vehicle_status_row.dart';
+
 void main() {
   runApp(const MainApp());
 }
@@ -236,11 +240,12 @@ class DashboardPage extends StatelessWidget {
             ),
           ],
         ),
-        actions: [
-          // ====================================================
-          // CAMBIO DE TEMA
-          // ====================================================
 
+        // ======================================================
+        // CAMBIO DE TEMA
+        // ======================================================
+
+        actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: Container(
@@ -291,9 +296,7 @@ class DashboardPage extends StatelessWidget {
                 letterSpacing: -0.7,
               ),
             ),
-
             const SizedBox(height: 6),
-
             Text(
               'Gestiona toda la información de tu vehículo desde un solo lugar.',
               style: theme.textTheme.bodyLarge?.copyWith(
@@ -674,7 +677,9 @@ class _VehicleMiniData extends StatelessWidget {
           color: Colors.white.withValues(alpha: 0.90),
           size: 20,
         ),
+
         const SizedBox(width: 9),
+
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -699,99 +704,6 @@ class _VehicleMiniData extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-// ============================================================
-// SUMMARY CARD
-// ============================================================
-//
-// Tarjeta pequeña para información resumida.
-//
-// A diferencia de la versión anterior, esta tarjeta tiene una
-// altura contenida y utiliza el color como acento, evitando que
-// toda la pantalla se convierta en grandes bloques verdes.
-// ============================================================
-
-class SummaryCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String value;
-  final Color? accentColor;
-
-  const SummaryCard({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.value,
-    this.accentColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    final accent = accentColor ?? colors.primary;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.cardTheme.color,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: colors.outline.withValues(alpha: 0.65),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: accent.withValues(alpha: 0.10),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    icon,
-                    color: accent,
-                    size: 22,
-                  ),
-                ),
-                const Spacer(),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: colors.onSurfaceVariant,
-                  size: 20,
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 14),
-
-            Text(
-              title,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: colors.onSurfaceVariant,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-
-            const SizedBox(height: 5),
-
-            Text(
-              value,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -862,231 +774,6 @@ class VehicleInfoRow extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-// ============================================================
-// VEHICLE STATUS ROW
-// ============================================================
-//
-// Fila utilizada para mostrar el estado de una parte concreta
-// del vehículo.
-//
-// El color del estado permite distinguir rápidamente entre
-// elementos correctos y elementos que requieren atención.
-// ============================================================
-
-class VehicleStatusRow extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String status;
-  final Color? statusColor;
-
-  const VehicleStatusRow({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.status,
-    this.statusColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-
-    final Color effectiveStatusColor =
-        statusColor ?? colors.onSurfaceVariant;
-
-    return Row(
-      children: [
-        Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: effectiveStatusColor.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(
-            icon,
-            color: effectiveStatusColor,
-            size: 20,
-          ),
-        ),
-
-        const SizedBox(width: 12),
-
-        Expanded(
-          child: Text(
-            title,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-
-        const SizedBox(width: 10),
-
-        Flexible(
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 6,
-            ),
-            decoration: BoxDecoration(
-              color: effectiveStatusColor.withValues(alpha: 0.10),
-              borderRadius: BorderRadius.circular(9),
-            ),
-            child: Text(
-              status,
-              textAlign: TextAlign.end,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: effectiveStatusColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// ============================================================
-// REMINDER CARD
-// ============================================================
-//
-// Tarjeta utilizada para mostrar un próximo recordatorio.
-//
-// Se mantiene la información original, pero ahora se presenta
-// como una fila compacta con icono, descripción y etiqueta.
-// ============================================================
-
-class ReminderCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String description;
-  final String tag;
-
-  const ReminderCard({
-    super.key,
-    required this.icon,
-    required this.description,
-    required this.title,
-    required this.tag,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.cardTheme.color,
-        borderRadius: BorderRadius.circular(17),
-        border: Border.all(
-          color: colors.outline.withValues(alpha: 0.65),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // --------------------------------------------------
-            // ICONO
-            // --------------------------------------------------
-
-            Container(
-              width: 45,
-              height: 45,
-              decoration: BoxDecoration(
-                color: colors.primary.withValues(alpha: 0.10),
-                borderRadius: BorderRadius.circular(13),
-              ),
-              child: Icon(
-                icon,
-                color: colors.primary,
-                size: 23,
-              ),
-            ),
-
-            const SizedBox(width: 13),
-
-            // --------------------------------------------------
-            // INFORMACIÓN
-            // --------------------------------------------------
-
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-
-                  const SizedBox(height: 4),
-
-                  Text(
-                    description,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: colors.onSurfaceVariant,
-                      height: 1.35,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(width: 10),
-
-            // --------------------------------------------------
-            // ETIQUETA
-            // --------------------------------------------------
-
-            Container(
-              constraints: const BoxConstraints(
-                maxWidth: 92,
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 6,
-              ),
-              decoration: BoxDecoration(
-                color: colors.primary.withValues(alpha: 0.09),
-                borderRadius: BorderRadius.circular(9),
-              ),
-              child: Text(
-                tag,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: colors.primary,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-
-            const SizedBox(width: 4),
-
-            Icon(
-              Icons.chevron_right_rounded,
-              color: colors.onSurfaceVariant,
-              size: 20,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
