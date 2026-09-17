@@ -1,4 +1,7 @@
+
 import 'package:flutter/material.dart';
+import 'gastos.dart';
+import 'recordatorios.dart';
 import 'login.dart';
 
 void main() {
@@ -149,27 +152,46 @@ const Card(
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 12),
-            const Row(
-              children: [
-                Expanded(
-                  child: SummaryCard(
-                    icon: Icons.build_outlined,
-                    title: 'Mantenimiento',
-                    value: '2 pendientes',
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: SummaryCard(
-                    icon: Icons.notifications_outlined,
-                    title: 'Recordatorios',
-                    value: '3 activos',
-                  ),
-                ),
-              ],
+            Row(
+  children: [
+    Expanded(
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const GastosPage(),
             ),
-            const SizedBox(height: 24),
-
+          );
+        },
+        child: const SummaryCard(
+          icon: Icons.attach_money_outlined,
+          title: 'Gastos',
+          value: '4 registrados',
+        ),
+      ),
+    ),
+    const SizedBox(width: 12),
+    Expanded(
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const RecordatoriosPage(),
+            ),
+          );
+        },
+        child: const SummaryCard(
+          icon: Icons.notifications_outlined,
+          title: 'Recordatorios',
+          value: '3 activos',
+        ),
+      ),
+    ),
+  ],
+),
+          
 Text(
   'Próximos recordatorios',
   style: Theme.of(context).textTheme.titleLarge,
