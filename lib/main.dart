@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'login.dart';
+
 import 'mi_vehiculo.dart';
+
 import 'widgets/reminder_card.dart';
+
 import 'widgets/summary_card.dart';
+
 import 'widgets/vehicle_status_row.dart';
 
 void main() {
@@ -11,14 +16,6 @@ void main() {
 
 // ============================================================
 // MAIN APP
-// ============================================================
-//
-// MainApp controla la configuración general de DriveWise.
-// Aquí se manejan el tema claro, el tema oscuro y el modo
-// seleccionado por el usuario.
-//
-// La aplicación utiliza Material 3 y mantiene una identidad
-// visual basada principalmente en verde, blanco y azul marino.
 // ============================================================
 
 class MainApp extends StatefulWidget {
@@ -29,13 +26,17 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  // Por defecto la aplicación inicia utilizando el tema claro.
+  // Tema que utiliza actualmente la aplicación.
   ThemeMode _themeMode = ThemeMode.light;
 
-  // Cambia entre el tema claro y el tema oscuro.
+  // Cambia entre tema claro y oscuro.
   void _cambiarTema(bool temaOscuro) {
     setState(() {
-      _themeMode = temaOscuro ? ThemeMode.dark : ThemeMode.light;
+      if (temaOscuro) {
+        _themeMode = ThemeMode.dark;
+      } else {
+        _themeMode = ThemeMode.light;
+      }
     });
   }
 
@@ -85,7 +86,6 @@ class _MainAppState extends State<MainApp> {
               if (states.contains(WidgetState.selected)) {
                 return Colors.white;
               }
-
               return const Color(0xFF6B7280);
             },
           ),
@@ -94,7 +94,6 @@ class _MainAppState extends State<MainApp> {
               if (states.contains(WidgetState.selected)) {
                 return const Color(0xFF16A34A);
               }
-
               return const Color(0xFFE5E7EB);
             },
           ),
@@ -141,7 +140,6 @@ class _MainAppState extends State<MainApp> {
               if (states.contains(WidgetState.selected)) {
                 return Colors.white;
               }
-
               return const Color(0xFF94A3B8);
             },
           ),
@@ -150,17 +148,20 @@ class _MainAppState extends State<MainApp> {
               if (states.contains(WidgetState.selected)) {
                 return const Color(0xFF16A34A);
               }
-
               return const Color(0xFF334155);
             },
           ),
         ),
       ),
 
-      // Permite cambiar entre los dos temas desde la aplicación.
+      // Tema seleccionado actualmente.
       themeMode: _themeMode,
 
-      home: DashboardPage(
+      // ========================================================
+      // INICIO DE LA APLICACIÓN
+      // ========================================================
+
+      home: LoginPage(
         temaOscuro: _themeMode == ThemeMode.dark,
         onCambiarTema: _cambiarTema,
       ),
@@ -170,19 +171,6 @@ class _MainAppState extends State<MainApp> {
 
 // ============================================================
 // DASHBOARD
-// ============================================================
-//
-// Pantalla principal de DriveWise.
-//
-// El dashboard está organizado en bloques visuales para que el
-// usuario pueda identificar rápidamente:
-//
-// 1. Su vehículo.
-// 2. El estado general.
-// 3. Los pendientes.
-// 4. Los próximos recordatorios.
-//
-// La pantalla utiliza ListView para evitar desbordamientos.
 // ============================================================
 
 class DashboardPage extends StatelessWidget {
@@ -203,6 +191,7 @@ class DashboardPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 20,
+
         title: Row(
           children: [
             Container(
@@ -218,7 +207,9 @@ class DashboardPage extends StatelessWidget {
                 size: 22,
               ),
             ),
+
             const SizedBox(width: 11),
+
             const Text(
               'DriveWise',
               style: TextStyle(
@@ -231,7 +222,7 @@ class DashboardPage extends StatelessWidget {
         ),
 
         // ======================================================
-        // CAMBIO DE TEMA
+        // CAMBIO DE TEMA Y CERRAR SESIÓN
         // ======================================================
 
         actions: [
@@ -258,7 +249,9 @@ class DashboardPage extends StatelessWidget {
                         ? const Color(0xFFF8FAFC)
                         : const Color(0xFF475569),
                   ),
+
                   const SizedBox(width: 2),
+
                   Switch(
                     value: temaOscuro,
                     onChanged: onCambiarTema,
@@ -267,6 +260,22 @@ class DashboardPage extends StatelessWidget {
               ),
             ),
           ),
+
+          IconButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LoginPage(
+                    temaOscuro: temaOscuro,
+                    onCambiarTema: onCambiarTema,
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(Icons.logout),
+            tooltip: 'Cerrar sesión',
+          ),
         ],
       ),
 
@@ -274,6 +283,7 @@ class DashboardPage extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 32),
           children: [
+
             // ==================================================
             // ENCABEZADO
             // ==================================================
@@ -285,7 +295,9 @@ class DashboardPage extends StatelessWidget {
                 letterSpacing: -0.7,
               ),
             ),
+
             const SizedBox(height: 6),
+
             Text(
               'Gestiona toda la información de tu vehículo desde un solo lugar.',
               style: theme.textTheme.bodyLarge?.copyWith(
@@ -351,7 +363,9 @@ class DashboardPage extends StatelessWidget {
                     accentColor: colors.primary,
                   ),
                 ),
+
                 const SizedBox(width: 12),
+
                 Expanded(
                   child: SummaryCard(
                     icon: Icons.notifications_active_outlined,
@@ -433,7 +447,9 @@ class DashboardPage extends StatelessWidget {
                   letterSpacing: -0.2,
                 ),
               ),
+
               const SizedBox(height: 3),
+
               Text(
                 subtitle,
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -465,6 +481,7 @@ class DashboardPage extends StatelessWidget {
           ),
         );
       },
+
       child: Container(
         decoration: BoxDecoration(
           color: colors.primary,
@@ -477,18 +494,18 @@ class DashboardPage extends StatelessWidget {
             ),
           ],
         ),
+
         child: Padding(
           padding: const EdgeInsets.all(20),
+
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // --------------------------------------------------
-              // CABECERA DE VEHÍCULO
-              // --------------------------------------------------
 
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+
                   Container(
                     width: 58,
                     height: 58,
@@ -496,17 +513,21 @@ class DashboardPage extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.18),
                       borderRadius: BorderRadius.circular(17),
                     ),
+
                     child: const Icon(
                       Icons.directions_car_rounded,
                       color: Colors.white,
                       size: 31,
                     ),
                   ),
+
                   const SizedBox(width: 14),
+
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+
                         Text(
                           'Mi vehículo',
                           style: theme.textTheme.titleLarge?.copyWith(
@@ -514,7 +535,9 @@ class DashboardPage extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
+
                         const SizedBox(height: 3),
+
                         Text(
                           'Mazda 3 Touring',
                           style: theme.textTheme.bodyMedium?.copyWith(
@@ -524,15 +547,18 @@ class DashboardPage extends StatelessWidget {
                       ],
                     ),
                   ),
+
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
                       vertical: 7,
                     ),
+
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.16),
                       borderRadius: BorderRadius.circular(10),
                     ),
+
                     child: const Text(
                       'ABC 123',
                       style: TextStyle(
@@ -547,21 +573,20 @@ class DashboardPage extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              // --------------------------------------------------
-              // DATOS DEL VEHÍCULO
-              // --------------------------------------------------
-
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 15,
                   vertical: 14,
                 ),
+
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(16),
                 ),
+
                 child: Row(
                   children: [
+
                     Expanded(
                       child: _VehicleMiniData(
                         icon: Icons.speed_rounded,
@@ -569,11 +594,13 @@ class DashboardPage extends StatelessWidget {
                         value: '42.580 km',
                       ),
                     ),
+
                     Container(
                       width: 1,
                       height: 42,
                       color: Colors.white.withValues(alpha: 0.20),
                     ),
+
                     Expanded(
                       child: _VehicleMiniData(
                         icon: Icons.calendar_today_rounded,
@@ -608,24 +635,31 @@ class DashboardPage extends StatelessWidget {
           color: colors.outline.withValues(alpha: 0.65),
         ),
       ),
+
       child: Padding(
         padding: const EdgeInsets.all(15),
+
         child: Column(
           children: [
+
             VehicleStatusRow(
               icon: Icons.check_circle_outline_rounded,
               title: 'Motor',
               status: 'En buen estado',
               statusColor: colors.primary,
             ),
+
             const Divider(height: 20),
+
             VehicleStatusRow(
               icon: Icons.battery_charging_full_rounded,
               title: 'Batería',
               status: 'Nivel óptimo',
               statusColor: colors.primary,
             ),
+
             const Divider(height: 20),
+
             VehicleStatusRow(
               icon: Icons.tire_repair_rounded,
               title: 'Neumáticos',
@@ -641,10 +675,6 @@ class DashboardPage extends StatelessWidget {
 
 // ============================================================
 // MINI DATO DEL VEHÍCULO
-// ============================================================
-//
-// Componente utilizado dentro de la tarjeta principal para
-// presentar información puntual sin crear una tarjeta adicional.
 // ============================================================
 
 class _VehicleMiniData extends StatelessWidget {
@@ -662,16 +692,20 @@ class _VehicleMiniData extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
+
         Icon(
           icon,
           color: Colors.white.withValues(alpha: 0.90),
           size: 20,
         ),
+
         const SizedBox(width: 9),
+
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
               Text(
                 label,
                 style: TextStyle(
@@ -679,7 +713,9 @@ class _VehicleMiniData extends StatelessWidget {
                   fontSize: 11,
                 ),
               ),
+
               const SizedBox(height: 2),
+
               Text(
                 value,
                 style: const TextStyle(
@@ -698,12 +734,6 @@ class _VehicleMiniData extends StatelessWidget {
 
 // ============================================================
 // VEHICLE INFO ROW
-// ============================================================
-//
-// Fila utilizada para mostrar un dato del vehículo.
-//
-// Se conserva como componente independiente para mantener la
-// estructura original del proyecto y facilitar su reutilización.
 // ============================================================
 
 class VehicleInfoRow extends StatelessWidget {
@@ -725,20 +755,25 @@ class VehicleInfoRow extends StatelessWidget {
 
     return Row(
       children: [
+
         Container(
           width: 34,
           height: 34,
+
           decoration: BoxDecoration(
             color: colors.primary.withValues(alpha: 0.10),
             borderRadius: BorderRadius.circular(10),
           ),
+
           child: Icon(
             icon,
             color: colors.primary,
             size: 19,
           ),
         ),
+
         const SizedBox(width: 12),
+
         Expanded(
           child: Text(
             label,
@@ -747,7 +782,9 @@ class VehicleInfoRow extends StatelessWidget {
             ),
           ),
         ),
+
         const SizedBox(width: 12),
+
         Flexible(
           child: Text(
             value,
