@@ -1,68 +1,121 @@
-\# DriveWise
+# DriveWise
 
+## Sistema móvil de gestión del vehículo
 
+DriveWise es una aplicación móvil creada para ayudar a los usuarios a organizar la información de sus vehículos.
 
-\## Sistema móvil de gestión inteligente del vehículo
+La aplicación busca reunir en un solo lugar información como gastos, combustible, mantenimientos, documentos y recordatorios.
 
-
-
-DriveWise es una aplicación móvil desarrollada para ayudar a los conductores de motocicletas y otros vehículos a centralizar y organizar la información relacionada con su vehículo.
-
-
-
-El proyecto busca facilitar el seguimiento de gastos, combustible, mantenimientos, reparaciones, documentos, vencimientos y recordatorios, ofreciendo una visión unificada del estado del vehículo.
-
-
-
-\## Equipo
-
-
+## Equipo
 
 | Integrante | GitHub |
-
 |---|---|
+| Jorge Giraldo | [@jhraldo](https://github.com/jhraldo) |
+| Santiago Echeverri | https://github.com/Tiago013 |
+| Alejandra Villa | Pendient |
 
-| Jorge Giraldo | \[@jhraldo](https://github.com/jhraldo) |
+## Grupo
 
-| Santiago Echeverri | Pendiente |
+**20262-IF2004-PROGRAMACIÓN MÓVIL-G602svg**
 
-| Alejandra Villa | Pendiente |
+## Tecnología
+
+- Flutter
+- Dart
+
+## Estado del proyecto
+
+Proyecto académico para la asignatura **Programación Móvil (IF2004)**.
+
+En esta primera entrega se presenta el esqueleto navegable de la aplicación y las principales pantallas definidas para el proyecto.
+
+## Pantallas principales
+
+- Login
+- Inicio
+- Mi vehículo
+- Detalle SOAT
+- Gastos
+- Nuevo gasto
+- Recordatorios
+
+La aplicación permite navegar entre las principales pantallas utilizando la navegación de Flutter.
+
+## Alcance inicial
+
+DriveWise busca permitir que el usuario pueda:
+
+- Registrar y consultar vehículos.
+- Consultar información del vehículo.
+- Registrar gastos.
+- Registrar combustible.
+- Registrar mantenimientos.
+- Consultar documentos.
+- Tener recordatorios de fechas importantes.
+
+Las funciones se irán desarrollando durante el semestre.
+
+## Documentación
+
+La definición completa del proyecto se encuentra en:
+
+[Documento de definición](docs/definicion.md)
+
+En este documento se encuentran el problema, objetivos, alcance, funcionalidades, requerimientos, reglas de negocio, modelo de datos, pantallas, mapa de navegación, historias de usuario y la arquitectura básica del proyecto.
+
+## Cómo ejecutar el proyecto
+
+Primero se debe tener instalado Flutter.
+
+Desde la carpeta del proyecto se puede ejecutar:
+
+```bash
+flutter pub get
+```
+
+Después se inicia la aplicación con:
+
+```bash
+flutter run
+```
+
+## Estructura básica
+
+```text
+drivewise_app/
+├── docs/
+│   ├── definicion.md
+│   ├── mockup/
+│   └── presentacion/
+├── lib/
+│   ├── main.dart
+│   ├── login.dart
+│   ├── mi_vehiculo.dart
+│   ├── detalle_soat.dart
+│   ├── gastos.dart
+│   ├── nuevo_gasto.dart
+│   ├── recordatorios.dart
+│   └── widgets/
+├── test/
+├── pubspec.yaml
+└── README.md
+```
+
+## Capturas y mockups
+
+Los mockups y materiales visuales del proyecto se encuentran en la carpeta:
+
+docs/pantallas/
 
 
+## Repositorio
 
-\## Tecnología
+El proyecto se encuentra en GitHub:
 
+https://github.com/jhraldo/drivewise_app
 
+## Uso de inteligencia artificial
 
-\- Flutter
+Se utilizó inteligencia artificial como apoyo para resolver dudas, revisar errores y comprender algunos conceptos durante el desarrollo.
 
-\- Dart
-
-
-
-\## Estado del proyecto
-
-
-
-Proyecto académico para la asignatura \*\*Programación Móvil (IF2004)\*\*.
-
-
-
-\*\*Grupo:\*\* 20262-IF2004-PROGRAMACIÓN MÓVIL-G602svg
-
-
-
-\## Alcance
-
-
-
-La primera versión contempla la gestión de vehículos, documentos, gastos, combustible, mantenimientos, reparaciones, recordatorios, historial e indicadores básicos.
-
-
-
-La aplicación no permitirá realizar compras, pagos, transferencias ni trámites oficiales. Las integraciones con servicios externos estarán sujetas a su disponibilidad y condiciones técnicas.
-
-
-
-Para conocer el alcance detallado del proyecto, consulte \[`docs/alcance.md`](docs/alcance.md).
-
+Los integrantes revisaron y adaptaron el contenido utilizado en el proyecto.
