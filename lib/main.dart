@@ -1,4 +1,8 @@
+
 import 'package:flutter/material.dart';
+import 'gastos.dart';
+import 'recordatorios.dart';
+import 'login.dart';
 
 import 'login.dart';
 
@@ -165,6 +169,10 @@ class _MainAppState extends State<MainApp> {
         temaOscuro: _themeMode == ThemeMode.dark,
         onCambiarTema: _cambiarTema,
       ),
+<<<<<<< HEAD
+      home: const LoginPage(),
+=======
+>>>>>>> origin/main
     );
   }
 }
@@ -331,6 +339,52 @@ class DashboardPage extends StatelessWidget {
             ),
 
             const SizedBox(height: 12),
+<<<<<<< HEAD
+            Row(
+  children: [
+    Expanded(
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const GastosPage(),
+            ),
+          );
+        },
+        child: const SummaryCard(
+          icon: Icons.attach_money_outlined,
+          title: 'Gastos',
+          value: '4 registrados',
+        ),
+      ),
+    ),
+    const SizedBox(width: 12),
+    Expanded(
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const RecordatoriosPage(),
+            ),
+          );
+        },
+        child: const SummaryCard(
+          icon: Icons.notifications_outlined,
+          title: 'Recordatorios',
+          value: '3 activos',
+        ),
+      ),
+    ),
+  ],
+),
+          
+Text(
+  'Próximos recordatorios',
+  style: Theme.of(context).textTheme.titleLarge,
+),
+=======
 
             _buildVehicleStatusCard(
               context,
@@ -378,6 +432,7 @@ class DashboardPage extends StatelessWidget {
             ),
 
             const SizedBox(height: 25),
+>>>>>>> origin/main
 
             // ==================================================
             // PRÓXIMOS RECORDATORIOS
