@@ -1,17 +1,11 @@
-
 import 'package:flutter/material.dart';
+
 import 'gastos.dart';
 import 'recordatorios.dart';
 import 'login.dart';
-
-import 'login.dart';
-
 import 'mi_vehiculo.dart';
-
 import 'widgets/reminder_card.dart';
-
 import 'widgets/summary_card.dart';
-
 import 'widgets/vehicle_status_row.dart';
 
 void main() {
@@ -30,10 +24,8 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  // Tema que utiliza actualmente la aplicación.
   ThemeMode _themeMode = ThemeMode.light;
 
-  // Cambia entre tema claro y oscuro.
   void _cambiarTema(bool temaOscuro) {
     setState(() {
       if (temaOscuro) {
@@ -67,29 +59,35 @@ class _MainAppState extends State<MainApp> {
           onSurface: const Color(0xFF172017),
           outline: const Color(0xFFD7DED7),
         ),
+
         scaffoldBackgroundColor: const Color(0xFFF7F9F7),
+
         cardTheme: const CardThemeData(
           color: Colors.white,
           elevation: 0,
           margin: EdgeInsets.zero,
         ),
+
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           foregroundColor: Color(0xFF172017),
           elevation: 0,
           surfaceTintColor: Colors.transparent,
         ),
+
         dividerTheme: const DividerThemeData(
           color: Color(0xFFE1E7E1),
           thickness: 1,
           space: 1,
         ),
+
         switchTheme: SwitchThemeData(
           thumbColor: WidgetStateProperty.resolveWith<Color?>(
             (states) {
               if (states.contains(WidgetState.selected)) {
                 return Colors.white;
               }
+
               return const Color(0xFF6B7280);
             },
           ),
@@ -98,6 +96,7 @@ class _MainAppState extends State<MainApp> {
               if (states.contains(WidgetState.selected)) {
                 return const Color(0xFF16A34A);
               }
+
               return const Color(0xFFE5E7EB);
             },
           ),
@@ -121,29 +120,35 @@ class _MainAppState extends State<MainApp> {
           onSurface: const Color(0xFFF8FAFC),
           outline: const Color(0xFF334155),
         ),
+
         scaffoldBackgroundColor: const Color(0xFF0F172A),
+
         cardTheme: const CardThemeData(
           color: Color(0xFF172033),
           elevation: 0,
           margin: EdgeInsets.zero,
         ),
+
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF0F172A),
           foregroundColor: Color(0xFFF8FAFC),
           elevation: 0,
           surfaceTintColor: Colors.transparent,
         ),
+
         dividerTheme: const DividerThemeData(
           color: Color(0xFF293548),
           thickness: 1,
           space: 1,
         ),
+
         switchTheme: SwitchThemeData(
           thumbColor: WidgetStateProperty.resolveWith<Color?>(
             (states) {
               if (states.contains(WidgetState.selected)) {
                 return Colors.white;
               }
+
               return const Color(0xFF94A3B8);
             },
           ),
@@ -152,27 +157,23 @@ class _MainAppState extends State<MainApp> {
               if (states.contains(WidgetState.selected)) {
                 return const Color(0xFF16A34A);
               }
+
               return const Color(0xFF334155);
             },
           ),
         ),
       ),
 
-      // Tema seleccionado actualmente.
       themeMode: _themeMode,
 
       // ========================================================
-      // INICIO DE LA APLICACIÓN
+      // PANTALLA INICIAL
       // ========================================================
 
       home: LoginPage(
         temaOscuro: _themeMode == ThemeMode.dark,
         onCambiarTema: _cambiarTema,
       ),
-<<<<<<< HEAD
-      home: const LoginPage(),
-=======
->>>>>>> origin/main
     );
   }
 }
@@ -291,7 +292,6 @@ class DashboardPage extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 32),
           children: [
-
             // ==================================================
             // ENCABEZADO
             // ==================================================
@@ -339,52 +339,6 @@ class DashboardPage extends StatelessWidget {
             ),
 
             const SizedBox(height: 12),
-<<<<<<< HEAD
-            Row(
-  children: [
-    Expanded(
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const GastosPage(),
-            ),
-          );
-        },
-        child: const SummaryCard(
-          icon: Icons.attach_money_outlined,
-          title: 'Gastos',
-          value: '4 registrados',
-        ),
-      ),
-    ),
-    const SizedBox(width: 12),
-    Expanded(
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const RecordatoriosPage(),
-            ),
-          );
-        },
-        child: const SummaryCard(
-          icon: Icons.notifications_outlined,
-          title: 'Recordatorios',
-          value: '3 activos',
-        ),
-      ),
-    ),
-  ],
-),
-          
-Text(
-  'Próximos recordatorios',
-  style: Theme.of(context).textTheme.titleLarge,
-),
-=======
 
             _buildVehicleStatusCard(
               context,
@@ -421,18 +375,44 @@ Text(
                 const SizedBox(width: 12),
 
                 Expanded(
-                  child: SummaryCard(
-                    icon: Icons.notifications_active_outlined,
-                    title: 'Recordatorios',
-                    value: '3 activos',
-                    accentColor: const Color(0xFF3B82F6),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const GastosPage(),
+                        ),
+                      );
+                    },
+                    child: const SummaryCard(
+                      icon: Icons.attach_money_outlined,
+                      title: 'Gastos',
+                      value: '4 registrados',
+                    ),
                   ),
                 ),
               ],
             ),
 
+            const SizedBox(height: 12),
+
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RecordatoriosPage(),
+                  ),
+                );
+              },
+              child: const SummaryCard(
+                icon: Icons.notifications_outlined,
+                title: 'Recordatorios',
+                value: '3 activos',
+              ),
+            ),
+
             const SizedBox(height: 25),
->>>>>>> origin/main
 
             // ==================================================
             // PRÓXIMOS RECORDATORIOS
@@ -532,11 +512,10 @@ Text(
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => const MiVehiculoPage(),
+            builder: (context) => const MiVehiculoPage(),
           ),
         );
       },
-
       child: Container(
         decoration: BoxDecoration(
           color: colors.primary,
@@ -549,18 +528,14 @@ Text(
             ),
           ],
         ),
-
         child: Padding(
           padding: const EdgeInsets.all(20),
-
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-
                   Container(
                     width: 58,
                     height: 58,
@@ -568,7 +543,6 @@ Text(
                       color: Colors.white.withValues(alpha: 0.18),
                       borderRadius: BorderRadius.circular(17),
                     ),
-
                     child: const Icon(
                       Icons.directions_car_rounded,
                       color: Colors.white,
@@ -582,7 +556,6 @@ Text(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         Text(
                           'Mi vehículo',
                           style: theme.textTheme.titleLarge?.copyWith(
@@ -608,12 +581,10 @@ Text(
                       horizontal: 10,
                       vertical: 7,
                     ),
-
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.16),
                       borderRadius: BorderRadius.circular(10),
                     ),
-
                     child: const Text(
                       'ABC 123',
                       style: TextStyle(
@@ -633,15 +604,12 @@ Text(
                   horizontal: 15,
                   vertical: 14,
                 ),
-
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(16),
                 ),
-
                 child: Row(
                   children: [
-
                     Expanded(
                       child: _VehicleMiniData(
                         icon: Icons.speed_rounded,
@@ -690,13 +658,10 @@ Text(
           color: colors.outline.withValues(alpha: 0.65),
         ),
       ),
-
       child: Padding(
         padding: const EdgeInsets.all(15),
-
         child: Column(
           children: [
-
             VehicleStatusRow(
               icon: Icons.check_circle_outline_rounded,
               title: 'Motor',
@@ -747,7 +712,6 @@ class _VehicleMiniData extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-
         Icon(
           icon,
           color: Colors.white.withValues(alpha: 0.90),
@@ -760,7 +724,6 @@ class _VehicleMiniData extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               Text(
                 label,
                 style: TextStyle(
@@ -810,16 +773,13 @@ class VehicleInfoRow extends StatelessWidget {
 
     return Row(
       children: [
-
         Container(
           width: 34,
           height: 34,
-
           decoration: BoxDecoration(
             color: colors.primary.withValues(alpha: 0.10),
             borderRadius: BorderRadius.circular(10),
           ),
-
           child: Icon(
             icon,
             color: colors.primary,
