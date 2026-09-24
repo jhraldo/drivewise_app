@@ -92,7 +92,7 @@ class _NuevoGastoPageState extends State<NuevoGastoPage> {
             const SizedBox(height: 24),
 
             DropdownButtonFormField<String>(
-              value: categoriaSeleccionada,
+              initialValue: categoriaSeleccionada,
               decoration: const InputDecoration(
                 labelText: 'Tipo de gasto',
                 border: OutlineInputBorder(),

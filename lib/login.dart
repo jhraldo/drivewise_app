@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'main.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final bool temaOscuro;
+  final ValueChanged<bool> onCambiarTema;
+
+  const LoginPage({
+    super.key,
+    required this.temaOscuro,
+    required this.onCambiarTema,
+  });
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -23,7 +30,10 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => const DashboardPage(),
+        builder: (context) => DashboardPage(
+          temaOscuro: widget.temaOscuro,
+          onCambiarTema: widget.onCambiarTema,
+        ),
       ),
     );
   }
