@@ -4,6 +4,7 @@ import 'gastos.dart';
 import 'recordatorios.dart';
 import 'login.dart';
 import 'mi_vehiculo.dart';
+
 import 'widgets/reminder_card.dart';
 import 'widgets/summary_card.dart';
 import 'widgets/vehicle_status_row.dart';
@@ -12,175 +13,165 @@ void main() {
   runApp(const MainApp());
 }
 
-// ============================================================
-// MAIN APP
-// ============================================================
+// ============================================================================
+// ESTADO GLOBAL DEL TEMA
+// ============================================================================
 
-class MainApp extends StatefulWidget {
+final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier<ThemeMode>(
+  ThemeMode.light,
+);
+
+class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
-  @override
-  State<MainApp> createState() => _MainAppState();
-}
-
-class _MainAppState extends State<MainApp> {
-  ThemeMode _themeMode = ThemeMode.light;
-
   void _cambiarTema(bool temaOscuro) {
-    setState(() {
-      if (temaOscuro) {
-        _themeMode = ThemeMode.dark;
-      } else {
-        _themeMode = ThemeMode.light;
-      }
-    });
+    themeNotifier.value = temaOscuro ? ThemeMode.dark : ThemeMode.light;
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'DriveWise',
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (context, themeMode, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'DriveWise',
 
-      // ========================================================
-      // TEMA CLARO
-      // ========================================================
+          // ==================================================================
+          // TEMA CLARO
+          // ==================================================================
+          theme: ThemeData(
+            useMaterial3: true,
 
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF16A34A),
-          brightness: Brightness.light,
-        ).copyWith(
-          primary: const Color(0xFF16A34A),
-          onPrimary: Colors.white,
-          secondary: const Color(0xFF15803D),
-          surface: const Color(0xFFF7F9F7),
-          onSurface: const Color(0xFF172017),
-          outline: const Color(0xFFD7DED7),
-        ),
+            colorScheme:
+                ColorScheme.fromSeed(
+                  seedColor: const Color(0xFF16A34A),
+                  brightness: Brightness.light,
+                ).copyWith(
+                  primary: const Color(0xFF16A34A),
+                  onPrimary: Colors.white,
+                  secondary: const Color(0xFF15803D),
+                  surface: const Color(0xFFF7F9F7),
+                  onSurface: const Color(0xFF172017),
+                  outline: const Color(0xFFD7DED7),
+                ),
 
-        scaffoldBackgroundColor: const Color(0xFFF7F9F7),
+            scaffoldBackgroundColor: const Color(0xFFF7F9F7),
 
-        cardTheme: const CardThemeData(
-          color: Colors.white,
-          elevation: 0,
-          margin: EdgeInsets.zero,
-        ),
+            cardTheme: const CardThemeData(
+              color: Colors.white,
+              elevation: 0,
+              margin: EdgeInsets.zero,
+            ),
 
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          foregroundColor: Color(0xFF172017),
-          elevation: 0,
-          surfaceTintColor: Colors.transparent,
-        ),
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.white,
+              foregroundColor: Color(0xFF172017),
+              elevation: 0,
+              surfaceTintColor: Colors.transparent,
+            ),
 
-        dividerTheme: const DividerThemeData(
-          color: Color(0xFFE1E7E1),
-          thickness: 1,
-          space: 1,
-        ),
+            dividerTheme: const DividerThemeData(
+              color: Color(0xFFE1E7E1),
+              thickness: 1,
+              space: 1,
+            ),
 
-        switchTheme: SwitchThemeData(
-          thumbColor: WidgetStateProperty.resolveWith<Color?>(
-            (states) {
-              if (states.contains(WidgetState.selected)) {
-                return Colors.white;
-              }
+            switchTheme: SwitchThemeData(
+              thumbColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return Colors.white;
+                }
 
-              return const Color(0xFF6B7280);
-            },
+                return const Color(0xFF6B7280);
+              }),
+
+              trackColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return const Color(0xFF16A34A);
+                }
+
+                return const Color(0xFFE5E7EB);
+              }),
+            ),
           ),
-          trackColor: WidgetStateProperty.resolveWith<Color?>(
-            (states) {
-              if (states.contains(WidgetState.selected)) {
-                return const Color(0xFF16A34A);
-              }
 
-              return const Color(0xFFE5E7EB);
-            },
+          // ==================================================================
+          // TEMA OSCURO
+          // ==================================================================
+          darkTheme: ThemeData(
+            useMaterial3: true,
+
+            colorScheme:
+                ColorScheme.fromSeed(
+                  seedColor: const Color(0xFF16A34A),
+                  brightness: Brightness.dark,
+                ).copyWith(
+                  primary: const Color(0xFF16A34A),
+                  onPrimary: Colors.white,
+                  secondary: const Color(0xFF22C55E),
+                  surface: const Color(0xFF0F172A),
+                  onSurface: const Color(0xFFF8FAFC),
+                  outline: const Color(0xFF334155),
+                ),
+
+            scaffoldBackgroundColor: const Color(0xFF0F172A),
+
+            cardTheme: const CardThemeData(
+              color: Color(0xFF172033),
+              elevation: 0,
+              margin: EdgeInsets.zero,
+            ),
+
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Color(0xFF0F172A),
+              foregroundColor: Color(0xFFF8FAFC),
+              elevation: 0,
+              surfaceTintColor: Colors.transparent,
+            ),
+
+            dividerTheme: const DividerThemeData(
+              color: Color(0xFF293548),
+              thickness: 1,
+              space: 1,
+            ),
+
+            switchTheme: SwitchThemeData(
+              thumbColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return Colors.white;
+                }
+
+                return const Color(0xFF94A3B8);
+              }),
+
+              trackColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return const Color(0xFF16A34A);
+                }
+
+                return const Color(0xFF334155);
+              }),
+            ),
           ),
-        ),
-      ),
 
-      // ========================================================
-      // TEMA OSCURO
-      // ========================================================
+          // Tema actualmente seleccionado.
+          themeMode: themeMode,
 
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF16A34A),
-          brightness: Brightness.dark,
-        ).copyWith(
-          primary: const Color(0xFF16A34A),
-          onPrimary: Colors.white,
-          secondary: const Color(0xFF22C55E),
-          surface: const Color(0xFF0F172A),
-          onSurface: const Color(0xFFF8FAFC),
-          outline: const Color(0xFF334155),
-        ),
-
-        scaffoldBackgroundColor: const Color(0xFF0F172A),
-
-        cardTheme: const CardThemeData(
-          color: Color(0xFF172033),
-          elevation: 0,
-          margin: EdgeInsets.zero,
-        ),
-
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF0F172A),
-          foregroundColor: Color(0xFFF8FAFC),
-          elevation: 0,
-          surfaceTintColor: Colors.transparent,
-        ),
-
-        dividerTheme: const DividerThemeData(
-          color: Color(0xFF293548),
-          thickness: 1,
-          space: 1,
-        ),
-
-        switchTheme: SwitchThemeData(
-          thumbColor: WidgetStateProperty.resolveWith<Color?>(
-            (states) {
-              if (states.contains(WidgetState.selected)) {
-                return Colors.white;
-              }
-
-              return const Color(0xFF94A3B8);
-            },
+          // Pantalla inicial.
+          home: LoginPage(
+            temaOscuro: themeMode == ThemeMode.dark,
+            onCambiarTema: _cambiarTema,
           ),
-          trackColor: WidgetStateProperty.resolveWith<Color?>(
-            (states) {
-              if (states.contains(WidgetState.selected)) {
-                return const Color(0xFF16A34A);
-              }
-
-              return const Color(0xFF334155);
-            },
-          ),
-        ),
-      ),
-
-      themeMode: _themeMode,
-
-      // ========================================================
-      // PANTALLA INICIAL
-      // ========================================================
-
-      home: LoginPage(
-        temaOscuro: _themeMode == ThemeMode.dark,
-        onCambiarTema: _cambiarTema,
-      ),
+        );
+      },
     );
   }
 }
 
-// ============================================================
+// ============================================================================
 // DASHBOARD
-// ============================================================
+// ============================================================================
 
 class DashboardPage extends StatelessWidget {
   final bool temaOscuro;
@@ -230,13 +221,9 @@ class DashboardPage extends StatelessWidget {
           ],
         ),
 
-        // ======================================================
-        // CAMBIO DE TEMA Y CERRAR SESIÓN
-        // ======================================================
-
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 12),
+            padding: const EdgeInsets.only(right: 6),
             child: Container(
               height: 42,
               padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -246,6 +233,7 @@ class DashboardPage extends StatelessWidget {
                     : const Color(0xFFF0F3F0),
                 borderRadius: BorderRadius.circular(22),
               ),
+
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -261,10 +249,7 @@ class DashboardPage extends StatelessWidget {
 
                   const SizedBox(width: 2),
 
-                  Switch(
-                    value: temaOscuro,
-                    onChanged: onCambiarTema,
-                  ),
+                  Switch(value: temaOscuro, onChanged: onCambiarTema),
                 ],
               ),
             ),
@@ -292,9 +277,9 @@ class DashboardPage extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 32),
           children: [
-            // ==================================================
+            // =================================================================
             // ENCABEZADO
-            // ==================================================
+            // =================================================================
 
             Text(
               'Hola, Santiago',
@@ -316,22 +301,16 @@ class DashboardPage extends StatelessWidget {
 
             const SizedBox(height: 22),
 
-            // ==================================================
-            // VEHÍCULO PRINCIPAL
-            // ==================================================
-
-            _buildVehicleCard(
-              context,
-              theme,
-              colors,
-            ),
+            // =================================================================
+            // VEHÍCULO
+            // =================================================================
+            _buildVehicleCard(context, theme, colors),
 
             const SizedBox(height: 25),
 
-            // ==================================================
+            // =================================================================
             // ESTADO DEL VEHÍCULO
-            // ==================================================
-
+            // =================================================================
             _buildSectionHeader(
               context,
               title: 'Estado del vehículo',
@@ -340,18 +319,13 @@ class DashboardPage extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            _buildVehicleStatusCard(
-              context,
-              theme,
-              colors,
-            ),
+            _buildVehicleStatusCard(context, theme, colors),
 
             const SizedBox(height: 25),
 
-            // ==================================================
+            // =================================================================
             // RESUMEN
-            // ==================================================
-
+            // =================================================================
             _buildSectionHeader(
               context,
               title: 'Resumen',
@@ -379,9 +353,7 @@ class DashboardPage extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const GastosPage(),
-                        ),
+                        MaterialPageRoute(builder: (context) => GastosPage()),
                       );
                     },
                     child: const SummaryCard(
@@ -414,10 +386,9 @@ class DashboardPage extends StatelessWidget {
 
             const SizedBox(height: 25),
 
-            // ==================================================
+            // =================================================================
             // PRÓXIMOS RECORDATORIOS
-            // ==================================================
-
+            // =================================================================
             _buildSectionHeader(
               context,
               title: 'Próximos recordatorios',
@@ -456,9 +427,9 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  // ==========================================================
+  // ==========================================================================
   // ENCABEZADO DE SECCIÓN
-  // ==========================================================
+  // ==========================================================================
 
   Widget _buildSectionHeader(
     BuildContext context, {
@@ -498,9 +469,9 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  // ==========================================================
+  // ==========================================================================
   // TARJETA DEL VEHÍCULO
-  // ==========================================================
+  // ==========================================================================
 
   Widget _buildVehicleCard(
     BuildContext context,
@@ -511,11 +482,10 @@ class DashboardPage extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => const MiVehiculoPage(),
-          ),
+          MaterialPageRoute(builder: (context) => const MiVehiculoPage()),
         );
       },
+
       child: Container(
         decoration: BoxDecoration(
           color: colors.primary,
@@ -528,8 +498,10 @@ class DashboardPage extends StatelessWidget {
             ),
           ],
         ),
+
         child: Padding(
           padding: const EdgeInsets.all(20),
+
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -543,6 +515,7 @@ class DashboardPage extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.18),
                       borderRadius: BorderRadius.circular(17),
                     ),
+
                     child: const Icon(
                       Icons.directions_car_rounded,
                       color: Colors.white,
@@ -608,6 +581,7 @@ class DashboardPage extends StatelessWidget {
                   color: Colors.white.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(16),
                 ),
+
                 child: Row(
                   children: [
                     Expanded(
@@ -641,9 +615,9 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  // ==========================================================
-  // TARJETA DE ESTADO
-  // ==========================================================
+  // ==========================================================================
+  // ESTADO DEL VEHÍCULO
+  // ==========================================================================
 
   Widget _buildVehicleStatusCard(
     BuildContext context,
@@ -654,12 +628,12 @@ class DashboardPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.cardTheme.color,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: colors.outline.withValues(alpha: 0.65),
-        ),
+        border: Border.all(color: colors.outline.withValues(alpha: 0.65)),
       ),
+
       child: Padding(
         padding: const EdgeInsets.all(15),
+
         child: Column(
           children: [
             VehicleStatusRow(
@@ -693,9 +667,9 @@ class DashboardPage extends StatelessWidget {
   }
 }
 
-// ============================================================
+// ============================================================================
 // MINI DATO DEL VEHÍCULO
-// ============================================================
+// ============================================================================
 
 class _VehicleMiniData extends StatelessWidget {
   final IconData icon;
@@ -712,11 +686,7 @@ class _VehicleMiniData extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
-          icon,
-          color: Colors.white.withValues(alpha: 0.90),
-          size: 20,
-        ),
+        Icon(icon, color: Colors.white.withValues(alpha: 0.90), size: 20),
 
         const SizedBox(width: 9),
 
@@ -750,9 +720,9 @@ class _VehicleMiniData extends StatelessWidget {
   }
 }
 
-// ============================================================
+// ============================================================================
 // VEHICLE INFO ROW
-// ============================================================
+// ============================================================================
 
 class VehicleInfoRow extends StatelessWidget {
   final IconData icon;
@@ -780,11 +750,7 @@ class VehicleInfoRow extends StatelessWidget {
             color: colors.primary.withValues(alpha: 0.10),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
-            icon,
-            color: colors.primary,
-            size: 19,
-          ),
+          child: Icon(icon, color: colors.primary, size: 19),
         ),
 
         const SizedBox(width: 12),

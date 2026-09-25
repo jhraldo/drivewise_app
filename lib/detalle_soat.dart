@@ -6,9 +6,7 @@ class DetalleSoatPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Detalle SOAT'),
-      ),
+      appBar: AppBar(title: const Text('Detalle SOAT')),
 
       body: ListView(
         padding: const EdgeInsets.all(20),
@@ -18,18 +16,13 @@ class DetalleSoatPage extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  const Icon(
-                    Icons.description_outlined,
-                    size: 70,
-                  ),
+                  const Icon(Icons.description_outlined, size: 70),
 
                   const SizedBox(height: 16),
 
                   Text(
                     'SOAT',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall,
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
 
                   const SizedBox(height: 8),
@@ -44,9 +37,7 @@ class DetalleSoatPage extends StatelessWidget {
                     ),
                     child: const Text(
                       'Vigente',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
@@ -90,25 +81,18 @@ class DetalleSoatPage extends StatelessWidget {
 
           Card(
             child: ListTile(
-              leading: const Icon(
-                Icons.notifications_active_outlined,
-              ),
+              leading: const Icon(Icons.notifications_active_outlined),
 
               title: const Text(
                 'Recordatorio de vencimiento',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
 
               subtitle: const Text(
                 'Te avisaremos antes del vencimiento del SOAT.',
               ),
 
-              trailing: Switch(
-                value: true,
-                onChanged: (valor) {},
-              ),
+              trailing: Switch(value: true, onChanged: (valor) {}),
             ),
           ),
         ],
@@ -142,18 +126,11 @@ class InfoSoatRow extends StatelessWidget {
           Expanded(
             child: Text(
               titulo,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
 
-          Text(
-            valor,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          Text(valor, style: const TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );
