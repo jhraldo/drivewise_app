@@ -12,7 +12,7 @@ La aplicación busca reunir en un solo lugar información como gastos, combustib
 |---|---|
 | Jorge Giraldo | [@jhraldo](https://github.com/jhraldo) |
 | Santiago Echeverri | https://github.com/Tiago013 |
-| Alejandra Villa | Pendient |
+| Alejandra Villa | [@Alehub23](https://github.com/Alehub23) |
 
 ## Grupo
 
