@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'gastos.dart';
 import 'recordatorios.dart';
 import 'login.dart';
 import 'mi_vehiculo.dart';
+
 import 'widgets/reminder_card.dart';
 import 'widgets/summary_card.dart';
 import 'widgets/vehicle_status_row.dart';
@@ -11,15 +13,19 @@ void main() {
   runApp(const MainApp());
 }
 
-final ValueNotifier<ThemeMode> themeNotifier =
-    ValueNotifier(ThemeMode.light);
+// ============================================================================
+// ESTADO GLOBAL DEL TEMA
+// ============================================================================
+
+final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier<ThemeMode>(
+  ThemeMode.light,
+);
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
   void _cambiarTema(bool temaOscuro) {
-    themeNotifier.value =
-        temaOscuro ? ThemeMode.dark : ThemeMode.light;
+    themeNotifier.value = temaOscuro ? ThemeMode.dark : ThemeMode.light;
   }
 
   @override
@@ -31,27 +37,26 @@ class MainApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'DriveWise',
 
-          // ============================================================
+          // ==================================================================
           // TEMA CLARO
-          // ============================================================
-
+          // ==================================================================
           theme: ThemeData(
             useMaterial3: true,
 
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFF16A34A),
-              brightness: Brightness.light,
-            ).copyWith(
-              primary: const Color(0xFF16A34A),
-              onPrimary: Colors.white,
-              secondary: const Color(0xFF15803D),
-              surface: const Color(0xFFF7F9F7),
-              onSurface: const Color(0xFF172017),
-              outline: const Color(0xFFD7DED7),
-            ),
+            colorScheme:
+                ColorScheme.fromSeed(
+                  seedColor: const Color(0xFF16A34A),
+                  brightness: Brightness.light,
+                ).copyWith(
+                  primary: const Color(0xFF16A34A),
+                  onPrimary: Colors.white,
+                  secondary: const Color(0xFF15803D),
+                  surface: const Color(0xFFF7F9F7),
+                  onSurface: const Color(0xFF172017),
+                  outline: const Color(0xFFD7DED7),
+                ),
 
-            scaffoldBackgroundColor:
-                const Color(0xFFF7F9F7),
+            scaffoldBackgroundColor: const Color(0xFFF7F9F7),
 
             cardTheme: const CardThemeData(
               color: Colors.white,
@@ -73,50 +78,44 @@ class MainApp extends StatelessWidget {
             ),
 
             switchTheme: SwitchThemeData(
-              thumbColor:
-                  WidgetStateProperty.resolveWith<Color?>(
-                (states) {
-                  if (states.contains(WidgetState.selected)) {
-                    return Colors.white;
-                  }
+              thumbColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return Colors.white;
+                }
 
-                  return const Color(0xFF6B7280);
-                },
-              ),
-              trackColor:
-                  WidgetStateProperty.resolveWith<Color?>(
-                (states) {
-                  if (states.contains(WidgetState.selected)) {
-                    return const Color(0xFF16A34A);
-                  }
+                return const Color(0xFF6B7280);
+              }),
 
-                  return const Color(0xFFE5E7EB);
-                },
-              ),
+              trackColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return const Color(0xFF16A34A);
+                }
+
+                return const Color(0xFFE5E7EB);
+              }),
             ),
           ),
 
-          // ============================================================
+          // ==================================================================
           // TEMA OSCURO
-          // ============================================================
-
+          // ==================================================================
           darkTheme: ThemeData(
             useMaterial3: true,
 
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFF16A34A),
-              brightness: Brightness.dark,
-            ).copyWith(
-              primary: const Color(0xFF16A34A),
-              onPrimary: Colors.white,
-              secondary: const Color(0xFF22C55E),
-              surface: const Color(0xFF0F172A),
-              onSurface: const Color(0xFFF8FAFC),
-              outline: const Color(0xFF334155),
-            ),
+            colorScheme:
+                ColorScheme.fromSeed(
+                  seedColor: const Color(0xFF16A34A),
+                  brightness: Brightness.dark,
+                ).copyWith(
+                  primary: const Color(0xFF16A34A),
+                  onPrimary: Colors.white,
+                  secondary: const Color(0xFF22C55E),
+                  surface: const Color(0xFF0F172A),
+                  onSurface: const Color(0xFFF8FAFC),
+                  outline: const Color(0xFF334155),
+                ),
 
-            scaffoldBackgroundColor:
-                const Color(0xFF0F172A),
+            scaffoldBackgroundColor: const Color(0xFF0F172A),
 
             cardTheme: const CardThemeData(
               color: Color(0xFF172033),
@@ -138,26 +137,21 @@ class MainApp extends StatelessWidget {
             ),
 
             switchTheme: SwitchThemeData(
-              thumbColor:
-                  WidgetStateProperty.resolveWith<Color?>(
-                (states) {
-                  if (states.contains(WidgetState.selected)) {
-                    return Colors.white;
-                  }
+              thumbColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return Colors.white;
+                }
 
-                  return const Color(0xFF94A3B8);
-                },
-              ),
-              trackColor:
-                  WidgetStateProperty.resolveWith<Color?>(
-                (states) {
-                  if (states.contains(WidgetState.selected)) {
-                    return const Color(0xFF16A34A);
-                  }
+                return const Color(0xFF94A3B8);
+              }),
 
-                  return const Color(0xFF334155);
-                },
-              ),
+              trackColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return const Color(0xFF16A34A);
+                }
+
+                return const Color(0xFF334155);
+              }),
             ),
           ),
 
@@ -232,15 +226,14 @@ class DashboardPage extends StatelessWidget {
             padding: const EdgeInsets.only(right: 6),
             child: Container(
               height: 42,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 5,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 5),
               decoration: BoxDecoration(
                 color: temaOscuro
                     ? const Color(0xFF172033)
                     : const Color(0xFFF0F3F0),
                 borderRadius: BorderRadius.circular(22),
               ),
+
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -256,10 +249,7 @@ class DashboardPage extends StatelessWidget {
 
                   const SizedBox(width: 2),
 
-                  Switch(
-                    value: temaOscuro,
-                    onChanged: onCambiarTema,
-                  ),
+                  Switch(value: temaOscuro, onChanged: onCambiarTema),
                 ],
               ),
             ),
@@ -285,21 +275,15 @@ class DashboardPage extends StatelessWidget {
 
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(
-            20,
-            18,
-            20,
-            32,
-          ),
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 32),
           children: [
-            // ==========================================================
+            // =================================================================
             // ENCABEZADO
-            // ==========================================================
+            // =================================================================
 
             Text(
               'Hola, Santiago',
-              style:
-                  theme.textTheme.headlineMedium?.copyWith(
+              style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w700,
                 letterSpacing: -0.7,
               ),
@@ -317,22 +301,16 @@ class DashboardPage extends StatelessWidget {
 
             const SizedBox(height: 22),
 
-            // ==========================================================
+            // =================================================================
             // VEHÍCULO
-            // ==========================================================
-
-            _buildVehicleCard(
-              context,
-              theme,
-              colors,
-            ),
+            // =================================================================
+            _buildVehicleCard(context, theme, colors),
 
             const SizedBox(height: 25),
 
-            // ==========================================================
+            // =================================================================
             // ESTADO DEL VEHÍCULO
-            // ==========================================================
-
+            // =================================================================
             _buildSectionHeader(
               context,
               title: 'Estado del vehículo',
@@ -341,64 +319,13 @@ class DashboardPage extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            Row(
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const GastosPage(),
-                        ),
-                      );
-                    },
-                    child: const SummaryCard(
-                      icon: Icons.attach_money_outlined,
-                      title: 'Gastos',
-                      value: '4 registrados',
-                    ),
-                  ),
-                ),
-
-                const SizedBox(width: 12),
-
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const RecordatoriosPage(),
-                        ),
-                      );
-                    },
-                    child: const SummaryCard(
-                      icon: Icons.notifications_outlined,
-                      title: 'Recordatorios',
-                      value: '3 activos',
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            _buildVehicleStatusCard(context, theme, colors),
 
             const SizedBox(height: 25),
 
-            _buildVehicleStatusCard(
-              context,
-              theme,
-              colors,
-            ),
-
-            const SizedBox(height: 25),
-
-            // ==========================================================
+            // =================================================================
             // RESUMEN
-            // ==========================================================
-
+            // =================================================================
             _buildSectionHeader(
               context,
               title: 'Resumen',
@@ -408,8 +335,7 @@ class DashboardPage extends StatelessWidget {
             const SizedBox(height: 12),
 
             Row(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: SummaryCard(
@@ -427,31 +353,42 @@ class DashboardPage extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const RecordatoriosPage(),
-                        ),
+                        MaterialPageRoute(builder: (context) => GastosPage()),
                       );
                     },
-                    child: SummaryCard(
-                      icon:
-                          Icons.notifications_active_outlined,
-                      title: 'Recordatorios',
-                      value: '3 activos',
-                      accentColor:
-                          const Color(0xFF3B82F6),
+                    child: const SummaryCard(
+                      icon: Icons.attach_money_outlined,
+                      title: 'Gastos',
+                      value: '4 registrados',
                     ),
                   ),
                 ),
               ],
             ),
 
+            const SizedBox(height: 12),
+
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RecordatoriosPage(),
+                  ),
+                );
+              },
+              child: const SummaryCard(
+                icon: Icons.notifications_outlined,
+                title: 'Recordatorios',
+                value: '3 activos',
+              ),
+            ),
+
             const SizedBox(height: 25),
 
-            // ==========================================================
+            // =================================================================
             // PRÓXIMOS RECORDATORIOS
-            // ==========================================================
-
+            // =================================================================
             _buildSectionHeader(
               context,
               title: 'Próximos recordatorios',
@@ -463,8 +400,7 @@ class DashboardPage extends StatelessWidget {
             const ReminderCard(
               icon: Icons.oil_barrel_outlined,
               title: 'Cambio de aceite',
-              description:
-                  'Programado para los próximos 1.200 km',
+              description: 'Programado para los próximos 1.200 km',
               tag: '1.200 km',
             ),
 
@@ -473,8 +409,7 @@ class DashboardPage extends StatelessWidget {
             const ReminderCard(
               icon: Icons.build_circle_outlined,
               title: 'Revisión técnico-mecánica',
-              description:
-                  'Pendiente para el próximo mes',
+              description: 'Pendiente para el próximo mes',
               tag: 'Próximo mes',
             ),
 
@@ -483,8 +418,7 @@ class DashboardPage extends StatelessWidget {
             const ReminderCard(
               icon: Icons.description_outlined,
               title: 'Documentos del vehículo',
-              description:
-                  'Revisar vencimiento del seguro',
+              description: 'Revisar vencimiento del seguro',
               tag: 'Revisar',
             ),
           ],
@@ -510,13 +444,11 @@ class DashboardPage extends StatelessWidget {
       children: [
         Expanded(
           child: Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style:
-                    theme.textTheme.titleLarge?.copyWith(
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.2,
                 ),
@@ -526,8 +458,7 @@ class DashboardPage extends StatelessWidget {
 
               Text(
                 subtitle,
-                style:
-                    theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodySmall?.copyWith(
                   color: colors.onSurfaceVariant,
                 ),
               ),
@@ -551,46 +482,40 @@ class DashboardPage extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (_) => const MiVehiculoPage(),
-          ),
+          MaterialPageRoute(builder: (context) => const MiVehiculoPage()),
         );
       },
+
       child: Container(
         decoration: BoxDecoration(
           color: colors.primary,
           borderRadius: BorderRadius.circular(22),
           boxShadow: [
             BoxShadow(
-              color: colors.primary.withValues(
-                alpha: 0.18,
-              ),
+              color: colors.primary.withValues(alpha: 0.18),
               blurRadius: 18,
               offset: const Offset(0, 8),
             ),
           ],
         ),
+
         child: Padding(
           padding: const EdgeInsets.all(20),
+
           child: Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                crossAxisAlignment:
-                    CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
                     width: 58,
                     height: 58,
                     decoration: BoxDecoration(
-                      color:
-                          Colors.white.withValues(
-                        alpha: 0.18,
-                      ),
-                      borderRadius:
-                          BorderRadius.circular(17),
+                      color: Colors.white.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(17),
                     ),
+
                     child: const Icon(
                       Icons.directions_car_rounded,
                       color: Colors.white,
@@ -602,18 +527,13 @@ class DashboardPage extends StatelessWidget {
 
                   Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Mi vehículo',
-                          style: theme
-                              .textTheme
-                              .titleLarge
-                              ?.copyWith(
+                          style: theme.textTheme.titleLarge?.copyWith(
                             color: Colors.white,
-                            fontWeight:
-                                FontWeight.w700,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
 
@@ -621,14 +541,8 @@ class DashboardPage extends StatelessWidget {
 
                         Text(
                           'Mazda 3 Touring',
-                          style: theme
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(
-                            color:
-                                Colors.white.withValues(
-                              alpha: 0.85,
-                            ),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: Colors.white.withValues(alpha: 0.85),
                           ),
                         ),
                       ],
@@ -636,25 +550,19 @@ class DashboardPage extends StatelessWidget {
                   ),
 
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 10,
                       vertical: 7,
                     ),
                     decoration: BoxDecoration(
-                      color:
-                          Colors.white.withValues(
-                        alpha: 0.16,
-                      ),
-                      borderRadius:
-                          BorderRadius.circular(10),
+                      color: Colors.white.withValues(alpha: 0.16),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Text(
                       'ABC 123',
                       style: TextStyle(
                         color: Colors.white,
-                        fontWeight:
-                            FontWeight.w700,
+                        fontWeight: FontWeight.w700,
                         fontSize: 12,
                       ),
                     ),
@@ -665,19 +573,15 @@ class DashboardPage extends StatelessWidget {
               const SizedBox(height: 20),
 
               Container(
-                padding:
-                    const EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: 15,
                   vertical: 14,
                 ),
                 decoration: BoxDecoration(
-                  color:
-                      Colors.white.withValues(
-                    alpha: 0.12,
-                  ),
-                  borderRadius:
-                      BorderRadius.circular(16),
+                  color: Colors.white.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
+
                 child: Row(
                   children: [
                     Expanded(
@@ -691,16 +595,12 @@ class DashboardPage extends StatelessWidget {
                     Container(
                       width: 1,
                       height: 42,
-                      color:
-                          Colors.white.withValues(
-                        alpha: 0.20,
-                      ),
+                      color: Colors.white.withValues(alpha: 0.20),
                     ),
 
                     Expanded(
                       child: _VehicleMiniData(
-                        icon:
-                            Icons.calendar_today_rounded,
+                        icon: Icons.calendar_today_rounded,
                         label: 'Año',
                         value: '2024',
                       ),
@@ -727,22 +627,17 @@ class DashboardPage extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: theme.cardTheme.color,
-        borderRadius:
-            BorderRadius.circular(18),
-        border: Border.all(
-          color:
-              colors.outline.withValues(
-            alpha: 0.65,
-          ),
-        ),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: colors.outline.withValues(alpha: 0.65)),
       ),
+
       child: Padding(
         padding: const EdgeInsets.all(15),
+
         child: Column(
           children: [
             VehicleStatusRow(
-              icon:
-                  Icons.check_circle_outline_rounded,
+              icon: Icons.check_circle_outline_rounded,
               title: 'Motor',
               status: 'En buen estado',
               statusColor: colors.primary,
@@ -751,8 +646,7 @@ class DashboardPage extends StatelessWidget {
             const Divider(height: 20),
 
             VehicleStatusRow(
-              icon:
-                  Icons.battery_charging_full_rounded,
+              icon: Icons.battery_charging_full_rounded,
               title: 'Batería',
               status: 'Nivel óptimo',
               statusColor: colors.primary,
@@ -763,10 +657,8 @@ class DashboardPage extends StatelessWidget {
             VehicleStatusRow(
               icon: Icons.tire_repair_rounded,
               title: 'Neumáticos',
-              status:
-                  'Revisión recomendada',
-              statusColor:
-                  const Color(0xFFD97706),
+              status: 'Revisión recomendada',
+              statusColor: const Color(0xFFD97706),
             ),
           ],
         ),
@@ -794,29 +686,18 @@ class _VehicleMiniData extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
-          icon,
-          color:
-              Colors.white.withValues(
-            alpha: 0.90,
-          ),
-          size: 20,
-        ),
+        Icon(icon, color: Colors.white.withValues(alpha: 0.90), size: 20),
 
         const SizedBox(width: 9),
 
         Expanded(
           child: Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
                 style: TextStyle(
-                  color:
-                      Colors.white.withValues(
-                    alpha: 0.70,
-                  ),
+                  color: Colors.white.withValues(alpha: 0.70),
                   fontSize: 11,
                 ),
               ),
@@ -827,8 +708,7 @@ class _VehicleMiniData extends StatelessWidget {
                 value,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontWeight:
-                      FontWeight.w700,
+                  fontWeight: FontWeight.w700,
                   fontSize: 13,
                 ),
               ),
@@ -867,18 +747,10 @@ class VehicleInfoRow extends StatelessWidget {
           width: 34,
           height: 34,
           decoration: BoxDecoration(
-            color:
-                colors.primary.withValues(
-              alpha: 0.10,
-            ),
-            borderRadius:
-                BorderRadius.circular(10),
+            color: colors.primary.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
-            icon,
-            color: colors.primary,
-            size: 19,
-          ),
+          child: Icon(icon, color: colors.primary, size: 19),
         ),
 
         const SizedBox(width: 12),
@@ -886,10 +758,8 @@ class VehicleInfoRow extends StatelessWidget {
         Expanded(
           child: Text(
             label,
-            style:
-                theme.textTheme.bodyMedium?.copyWith(
-              color:
-                  colors.onSurfaceVariant,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colors.onSurfaceVariant,
             ),
           ),
         ),
@@ -900,10 +770,8 @@ class VehicleInfoRow extends StatelessWidget {
           child: Text(
             value,
             textAlign: TextAlign.end,
-            style:
-                theme.textTheme.bodyMedium?.copyWith(
-              fontWeight:
-                  FontWeight.w700,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),

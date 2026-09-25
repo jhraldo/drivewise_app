@@ -45,7 +45,10 @@ class MiVehiculoPage extends StatelessWidget {
                           ],
                         ),
                       ),
-                      _StatusBadge(label: 'Todo en orden', color: colors.primary),
+                      _StatusBadge(
+                        label: 'Todo en orden',
+                        color: colors.primary,
+                      ),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -157,53 +160,50 @@ class _InformationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  Icon(Icons.info_outline, color: colors.primary),
-                  const SizedBox(width: 10),
-                  Text(
-                    'Información general',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              const Row(
-                children: [
-                  Expanded(
-                    child: _GeneralInfo(title: 'Tipo', value: 'Motocicleta'),
-                  ),
-                  Expanded(
-                    child: _GeneralInfo(title: 'Cilindraje', value: '149 cc'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              const Row(
-                children: [
-                  Expanded(
-                    child: _GeneralInfo(
-                      title: 'Transmisión',
-                      value: '5 velocidades',
-                    ),
-                  ),
-                  Expanded(
-                    child: _GeneralInfo(
-                      title: 'Combustible',
-                      value: 'Gasolina',
-                    ),
-                  ),
-                ],
+              Icon(Icons.info_outline, color: colors.primary),
+              const SizedBox(width: 10),
+              Text(
+                'Información general',
+                style: Theme.of(context).textTheme.titleLarge,
               ),
             ],
           ),
-        ),
-      );
+          const SizedBox(height: 16),
+          const Row(
+            children: [
+              Expanded(
+                child: _GeneralInfo(title: 'Tipo', value: 'Motocicleta'),
+              ),
+              Expanded(
+                child: _GeneralInfo(title: 'Cilindraje', value: '149 cc'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const Row(
+            children: [
+              Expanded(
+                child: _GeneralInfo(
+                  title: 'Transmisión',
+                  value: '5 velocidades',
+                ),
+              ),
+              Expanded(
+                child: _GeneralInfo(title: 'Combustible', value: 'Gasolina'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 class _VehicleStatusCard extends StatelessWidget {
@@ -212,63 +212,63 @@ class _VehicleStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Estado del vehículo',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 16),
+          Row(
             children: [
-              Text(
-                'Estado del vehículo',
-                style: Theme.of(context).textTheme.titleLarge,
+              Expanded(
+                child: _StatusItem(
+                  icon: Icons.settings,
+                  title: 'Motor',
+                  status: 'Óptimo',
+                  color: colors.primary,
+                ),
               ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: _StatusItem(
-                      icon: Icons.settings,
-                      title: 'Motor',
-                      status: 'Óptimo',
-                      color: colors.primary,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _StatusItem(
-                      icon: Icons.tire_repair,
-                      title: 'Llantas',
-                      status: 'Óptimo',
-                      color: colors.primary,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: _StatusItem(
-                      icon: Icons.disc_full,
-                      title: 'Frenos',
-                      status: 'Regular',
-                      color: colors.tertiary,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _StatusItem(
-                      icon: Icons.battery_full,
-                      title: 'Batería',
-                      status: 'Óptimo',
-                      color: colors.primary,
-                    ),
-                  ),
-                ],
+              const SizedBox(width: 8),
+              Expanded(
+                child: _StatusItem(
+                  icon: Icons.tire_repair,
+                  title: 'Llantas',
+                  status: 'Óptimo',
+                  color: colors.primary,
+                ),
               ),
             ],
           ),
-        ),
-      );
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: _StatusItem(
+                  icon: Icons.disc_full,
+                  title: 'Frenos',
+                  status: 'Regular',
+                  color: colors.tertiary,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _StatusItem(
+                  icon: Icons.battery_full,
+                  title: 'Batería',
+                  status: 'Óptimo',
+                  color: colors.primary,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 class _StatusBadge extends StatelessWidget {
@@ -277,20 +277,24 @@ class _StatusBadge extends StatelessWidget {
   final Color color;
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: .14),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Text(
-          '✓ $label',
-          style: TextStyle(color: color, fontWeight: FontWeight.bold),
-        ),
-      );
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+    decoration: BoxDecoration(
+      color: color.withValues(alpha: .14),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Text(
+      '✓ $label',
+      style: TextStyle(color: color, fontWeight: FontWeight.bold),
+    ),
+  );
 }
 
 class _InfoItem extends StatelessWidget {
-  const _InfoItem({required this.icon, required this.title, required this.subtitle});
+  const _InfoItem({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
   final IconData icon;
   final String title;
   final String subtitle;
@@ -334,7 +338,11 @@ class _QuickAction extends StatelessWidget {
               child: Icon(icon, color: colors.onPrimaryContainer),
             ),
             const SizedBox(height: 6),
-            Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12)),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12),
+            ),
           ],
         ),
       ),
@@ -348,36 +356,47 @@ class _GeneralInfo extends StatelessWidget {
   final String value;
   @override
   Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
-          const SizedBox(height: 4),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
-        ],
-      );
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        title,
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+      ),
+      const SizedBox(height: 4),
+      Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
+    ],
+  );
 }
 
 class _StatusItem extends StatelessWidget {
-  const _StatusItem({required this.icon, required this.title, required this.status, required this.color});
+  const _StatusItem({
+    required this.icon,
+    required this.title,
+    required this.status,
+    required this.color,
+  });
   final IconData icon;
   final String title;
   final String status;
   final Color color;
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-          borderRadius: BorderRadius.circular(12),
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Column(
+      children: [
+        Icon(icon, color: color, size: 30),
+        const SizedBox(height: 6),
+        Text(title),
+        const SizedBox(height: 4),
+        Text(
+          status,
+          style: TextStyle(color: color, fontWeight: FontWeight.bold),
         ),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 30),
-            const SizedBox(height: 6),
-            Text(title),
-            const SizedBox(height: 4),
-            Text(status, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
-          ],
-        ),
-      );
+      ],
+    ),
+  );
 }
