@@ -1,76 +1,98 @@
 import 'package:flutter/material.dart';
 import 'gastos.dart';
 
-class NuevoGastoPage extends StatelessWidget {
+class NuevoGastoPage extends StatefulWidget {
   const NuevoGastoPage({super.key});
 
   @override
+  State<NuevoGastoPage> createState() => _NuevoGastoPageState();
+}
+
+class _NuevoGastoPageState extends State<NuevoGastoPage> {
+
+  final formKey = GlobalKey<FormState>();
+
+  final descripcionController = TextEditingController();
+  final kilometrajeController = TextEditingController();
+  final valorController = TextEditingController();
+  final proveedorController = TextEditingController();
+  final notasController = TextEditingController();
+
+  final List<String> categorias = [
+    'Aceite',
+    'Llantas',
+    'Combustible',
+    'Reparaciones',
+    'Repuestos',
+    'Mantenimiento',
+    'Otros',
+  ];
+
+  String categoriaSeleccionada = 'Aceite';
+  DateTime fechaSeleccionada = DateTime.now();
+
+  @override
+  void dispose() {
+    descripcionController.dispose();
+    kilometrajeController.dispose();
+    valorController.dispose();
+    proveedorController.dispose();
+    notasController.dispose();
+
+    super.dispose();
+  }
+
+  Future<void> seleccionarFecha() async {
+    final fecha = await showDatePicker(
+      context: context,
+      initialDate: fechaSeleccionada,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2035),
+    );
+
+    if (fecha == null) {
+      return;
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      fechaSeleccionada = fecha;
+    });
+  }
+
+  void guardarGasto() {
+
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
+
+    final nuevoGasto = Gasto(
+      categoria: categoriaSeleccionada,
+      descripcion: descripcionController.text,
+      fecha: fechaSeleccionada,
+      kilometraje: kilometrajeController.text,
+      valor: double.parse(valorController.text),
+      proveedor: proveedorController.text,
+      notas: notasController.text,
+    );
+
+    Navigator.pop(context, nuevoGasto);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
-
-    final categoriaSeleccionada = ValueNotifier<String>('Aceite');
-    final fechaSeleccionada = ValueNotifier<DateTime>(DateTime.now());
-
-    final descripcionController = TextEditingController();
-    final kilometrajeController = TextEditingController();
-    final valorController = TextEditingController();
-    final proveedorController = TextEditingController();
-    final notasController = TextEditingController();
-
-    final List<String> categorias = [
-      'Aceite',
-      'Llantas',
-      'Combustible',
-      'Reparaciones',
-      'Repuestos',
-      'Mantenimiento',
-      'Otros',
-    ];
-
-    Future<void> seleccionarFecha() async {
-      final fecha = await showDatePicker(
-        context: context,
-        initialDate: fechaSeleccionada.value,
-        firstDate: DateTime(2020),
-        lastDate: DateTime(2035),
-      );
-
-      if (fecha == null) {
-        return;
-      }
-
-      if (!context.mounted) {
-        return;
-      }
-
-      fechaSeleccionada.value = fecha;
-    }
-
-    void guardarGasto() {
-      if (!formKey.currentState!.validate()) {
-        return;
-      }
-
-      final nuevoGasto = Gasto(
-        categoria: categoriaSeleccionada.value,
-        descripcion: descripcionController.text,
-        fecha: fechaSeleccionada.value,
-        kilometraje: kilometrajeController.text,
-        valor: double.parse(valorController.text),
-        proveedor: proveedorController.text,
-        notas: notasController.text,
-      );
-
-      Navigator.pop(context, nuevoGasto);
-    }
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Nuevo gasto')),
+      appBar: AppBar(
+        title: const Text('Nuevo gasto'),
+      ),
+
       body: Form(
         key: formKey,
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
+
             Text(
               'Registrar gasto',
               style: Theme.of(context).textTheme.headlineSmall,
@@ -78,28 +100,27 @@ class NuevoGastoPage extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            ValueListenableBuilder<String>(
-              valueListenable: categoriaSeleccionada,
-              builder: (context, categoria, child) {
-                return DropdownButtonFormField<String>(
-                  initialValue: categoria,
-                  decoration: const InputDecoration(
-                    labelText: 'Tipo de gasto',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.category_outlined),
-                  ),
-                  items: categorias.map((categoria) {
-                    return DropdownMenuItem<String>(
-                      value: categoria,
-                      child: Text(categoria),
-                    );
-                  }).toList(),
-                  onChanged: (valorSeleccionado) {
-                    if (valorSeleccionado != null) {
-                      categoriaSeleccionada.value = valorSeleccionado;
-                    }
-                  },
+            DropdownButtonFormField<String>(
+              initialValue: categoriaSeleccionada,
+              decoration: const InputDecoration(
+                labelText: 'Tipo de gasto',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.category_outlined),
+              ),
+
+              items: categorias.map((categoria) {
+                return DropdownMenuItem<String>(
+                  value: categoria,
+                  child: Text(categoria),
                 );
+              }).toList(),
+
+              onChanged: (valorSeleccionado) {
+                if (valorSeleccionado != null) {
+                  setState(() {
+                    categoriaSeleccionada = valorSeleccionado;
+                  });
+                }
               },
             ),
 
@@ -113,6 +134,7 @@ class NuevoGastoPage extends StatelessWidget {
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.description_outlined),
               ),
+
               validator: (valor) {
                 if (valor == null || valor.isEmpty) {
                   return 'Ingresa una descripción';
@@ -124,21 +146,19 @@ class NuevoGastoPage extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            ValueListenableBuilder<DateTime>(
-              valueListenable: fechaSeleccionada,
-              builder: (context, fecha, child) {
-                return InkWell(
-                  onTap: seleccionarFecha,
-                  child: InputDecorator(
-                    decoration: const InputDecoration(
-                      labelText: 'Fecha',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.calendar_today_outlined),
-                    ),
-                    child: Text('${fecha.day}/${fecha.month}/${fecha.year}'),
-                  ),
-                );
-              },
+            InkWell(
+              onTap: seleccionarFecha,
+              child: InputDecorator(
+                decoration: const InputDecoration(
+                  labelText: 'Fecha',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.calendar_today_outlined),
+                ),
+
+                child: Text(
+                  '${fechaSeleccionada.day}/${fechaSeleccionada.month}/${fechaSeleccionada.year}',
+                ),
+              ),
             ),
 
             const SizedBox(height: 16),
@@ -152,6 +172,7 @@ class NuevoGastoPage extends StatelessWidget {
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.speed_outlined),
               ),
+
               validator: (valor) {
                 if (valor == null || valor.isEmpty) {
                   return 'Ingresa el kilometraje';
@@ -172,13 +193,20 @@ class NuevoGastoPage extends StatelessWidget {
                 prefixIcon: Icon(Icons.attach_money),
                 border: OutlineInputBorder(),
               ),
+
               validator: (valorIngresado) {
                 if (valorIngresado == null || valorIngresado.isEmpty) {
                   return 'Ingresa el valor';
                 }
 
-                if (double.tryParse(valorIngresado) == null) {
+                final valor = double.tryParse(valorIngresado);
+
+                if (valor == null) {
                   return 'Ingresa un valor válido';
+                }
+
+                if (valor <= 0) {
+                  return 'El valor debe ser mayor que cero';
                 }
 
                 return null;
