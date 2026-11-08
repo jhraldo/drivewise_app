@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'nuevo_gasto.dart';
+import 'detalle_gasto.dart';
 
 class Gasto {
   final String categoria;
@@ -70,7 +72,9 @@ class GastosPage extends StatelessWidget {
   Future<void> agregarGasto(BuildContext context) async {
     final nuevoGasto = await Navigator.push<Gasto>(
       context,
-      MaterialPageRoute(builder: (context) => const NuevoGastoPage()),
+      MaterialPageRoute(
+        builder: (context) => const NuevoGastoPage(),
+      ),
     );
 
     if (nuevoGasto != null) {
@@ -106,7 +110,9 @@ class GastosPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Gastos')),
+      appBar: AppBar(
+        title: const Text('Gastos'),
+      ),
 
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => agregarGasto(context),
@@ -143,14 +149,18 @@ class GastosPage extends StatelessWidget {
                           children: [
                             const Text(
                               'Total gastado',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
 
                             const SizedBox(height: 4),
 
                             Text(
                               formatoPesos(totalGastado),
-                              style: Theme.of(context).textTheme.headlineSmall,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall,
                             ),
                           ],
                         ),
@@ -183,13 +193,28 @@ class GastosPage extends StatelessWidget {
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
                       child: ListTile(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetalleGastoPage(
+                                gasto: gasto,
+                              ),
+                            ),
+                          );
+                        },
+
                         leading: CircleAvatar(
-                          child: Icon(iconoCategoria(gasto.categoria)),
+                          child: Icon(
+                            iconoCategoria(gasto.categoria),
+                          ),
                         ),
 
                         title: Text(
                           gasto.descripcion,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
 
                         subtitle: Text(
@@ -198,7 +223,9 @@ class GastosPage extends StatelessWidget {
 
                         trailing: Text(
                           formatoPesos(gasto.valor),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     );

@@ -116,6 +116,6 @@ https://github.com/jhraldo/drivewise_app
 
 ## Uso de inteligencia artificial
 
-Se utilizó inteligencia artificial como apoyo para resolver dudas, revisar errores y comprender algunos conceptos durante el desarrollo.
+Se utilizó inteligencia artificial como apoyo para resolver dudas, revisar errores y comprender algunos conceptos durante el desarrollo. También por medio de esta, específicamente Chat GPT se crearon la simágenes que sirvieron como mockups del proyecto
 
 Los integrantes revisaron y adaptaron el contenido utilizado en el proyecto.
