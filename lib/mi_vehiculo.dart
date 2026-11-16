@@ -836,26 +836,6 @@ class _RegistroVehiculoPageState
 
             const SizedBox(height: 16),
 
-            // MODELO
-            TextFormField(
-              controller: modeloController,
-              decoration: InputDecoration(
-                labelText: 'Modelo',
-                hintText: 'Ej. FZ 2.0, Onix, Mazda 3',
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.car_repair),
-                suffixIcon: IconButton(
-                  onPressed: buscarModeloEnCatalogo,
-                  icon: const Icon(Icons.search),
-                  tooltip: 'Buscar modelo en el catálogo',
-                ),
-              ),
-              validator: (value) =>
-                  validarTexto(value, 'el modelo'),
-            ),
-
-            const SizedBox(height: 16),
-
             // AÑO
             TextFormField(
               controller: anioController,
@@ -877,6 +857,26 @@ class _RegistroVehiculoPageState
 
                 return null;
               },
+            ),
+
+            const SizedBox(height: 16),
+
+            // MODELO
+            TextFormField(
+              controller: modeloController,
+              decoration: InputDecoration(
+                labelText: 'Modelo',
+                hintText: 'Ej. FZ 2.0, Onix, Mazda 3',
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.car_repair),
+                suffixIcon: IconButton(
+                  onPressed: buscarModeloEnCatalogo,
+                  icon: const Icon(Icons.search),
+                  tooltip: 'Buscar modelo en el catálogo',
+                ),
+              ),
+              validator: (value) =>
+                  validarTexto(value, 'el modelo'),
             ),
 
             const SizedBox(height: 16),
