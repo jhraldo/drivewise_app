@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'mantenimiento.dart';
-import 'presentation/documentos_page.dart';
+
+import 'data/repositories/catalogo_repository.dart';
+import 'data/repositories/llamados_repository.dart';
+import 'data/services/nhtsa_service.dart';
+import 'ui/catalogo/view_models/catalogo_view_model.dart';
+import 'ui/catalogo/widgets/seleccionar_modelo_pantalla.dart';
+import 'ui/llamados/view_models/llamados_view_model.dart';
+import 'ui/llamados/widgets/llamados_pantalla.dart';
+import 'ui/vehiculo/widgets/imagen_vehiculo_tarjeta.dart';
+
+// ============================================================
 // MODELO DEL VEHICULO
+// ============================================================
+
 class Vehiculo {
   final String id;
   final String tipo;
@@ -17,6 +30,7 @@ class Vehiculo {
   final String combustible;
   final String transmision;
   final String ciudad;
+
   Vehiculo({
     this.id = '',
     required this.tipo,
@@ -31,6 +45,7 @@ class Vehiculo {
     required this.transmision,
     required this.ciudad,
   });
+
   // Convertir el objeto Vehiculo en un mapa para Firestore.
   Map<String, dynamic> toMap() {
     return {
@@ -48,6 +63,7 @@ class Vehiculo {
       'fechaRegistro': FieldValue.serverTimestamp(),
     };
   }
+
   // Crear un objeto Vehiculo a partir de los datos de Firestore.
   factory Vehiculo.fromMap(
     String id,
@@ -69,88 +85,98 @@ class Vehiculo {
     );
   }
 }
+
 // ============================================================
 // PANTALLA PRINCIPAL: MI VEHICULO
 // ============================================================
-class MiVehiculoPage extends StatefulWidget {
-  const MiVehiculoPage({
-    super.key,
-    this.vehiculoIdInicial,
-  });
 
-  final String? vehiculoIdInicial;
+class MiVehiculoPage extends StatefulWidget {
+  const MiVehiculoPage({super.key});
+
   @override
   State<MiVehiculoPage> createState() => _MiVehiculoPageState();
 }
+
 class _MiVehiculoPageState extends State<MiVehiculoPage> {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   List<Vehiculo> vehiculos = [];
+
   int vehiculoSeleccionado = 0;
+
   bool cargando = true;
+
   String? errorCarga;
+
   // Obtener la colección de vehículos del usuario autenticado.
   CollectionReference<Map<String, dynamic>> get _coleccionVehiculos {
     final usuario = _auth.currentUser;
+
     if (usuario == null) {
       throw Exception('No hay un usuario autenticado.');
     }
+
     return _db
         .collection('usuarios')
         .doc(usuario.uid)
         .collection('vehiculos');
   }
+
   @override
   void initState() {
     super.initState();
     cargarVehiculos();
   }
+
   // ============================================================
   // CONSULTAR VEHICULOS EN FIRESTORE
   // ============================================================
+
   Future<void> cargarVehiculos() async {
     try {
       setState(() {
         cargando = true;
         errorCarga = null;
       });
+
       final consulta = await _coleccionVehiculos.get();
+
       final List<Vehiculo> lista = consulta.docs.map((documento) {
         return Vehiculo.fromMap(
           documento.id,
           documento.data(),
         );
       }).toList();
+
       if (!mounted) return;
+
       setState(() {
         vehiculos = lista;
-
-        final indiceInicial = widget.vehiculoIdInicial == null
-            ? -1
-            : lista.indexWhere(
-                (vehiculo) => vehiculo.id == widget.vehiculoIdInicial,
-              );
-
-        vehiculoSeleccionado = indiceInicial >= 0 ? indiceInicial : 0;
+        vehiculoSeleccionado = 0;
         cargando = false;
       });
     } on FirebaseException catch (e) {
       if (!mounted) return;
+
       setState(() {
         cargando = false;
         errorCarga = e.message ?? 'No se pudieron consultar los vehículos.';
       });
     } catch (e) {
       if (!mounted) return;
+
       setState(() {
         cargando = false;
         errorCarga = 'Ocurrió un error al consultar los vehículos.';
       });
     }
   }
+
   // ============================================================
   // REGISTRAR VEHICULO
   // ============================================================
+
   Future<void> registrarVehiculo() async {
     final resultado = await Navigator.push<Vehiculo>(
       context,
@@ -158,28 +184,36 @@ class _MiVehiculoPageState extends State<MiVehiculoPage> {
         builder: (context) => const RegistroVehiculoPage(),
       ),
     );
+
     if (resultado == null) {
       return;
     }
+
     // El formulario ya guarda el vehículo en Firestore.
     // Aquí solamente actualizamos la información de la pantalla.
     await cargarVehiculos();
+
     if (!mounted) return;
+
     final indice = vehiculos.indexWhere(
       (vehiculo) => vehiculo.id == resultado.id,
     );
+
     if (indice >= 0) {
       setState(() {
         vehiculoSeleccionado = indice;
       });
     }
   }
+
   // ============================================================
   // CONSTRUIR PANTALLA
   // ============================================================
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mi vehículo'),
@@ -193,12 +227,14 @@ class _MiVehiculoPageState extends State<MiVehiculoPage> {
       body: _construirContenido(colors),
     );
   }
+
   Widget _construirContenido(ColorScheme colors) {
     if (cargando) {
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
+
     if (errorCarga != null) {
       return Center(
         child: Padding(
@@ -226,6 +262,7 @@ class _MiVehiculoPageState extends State<MiVehiculoPage> {
         ),
       );
     }
+
     if (vehiculos.isEmpty) {
       return Center(
         child: Padding(
@@ -267,7 +304,9 @@ class _MiVehiculoPageState extends State<MiVehiculoPage> {
         ),
       );
     }
+
     final vehiculo = vehiculos[vehiculoSeleccionado];
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -299,18 +338,19 @@ class _MiVehiculoPageState extends State<MiVehiculoPage> {
           ),
           const SizedBox(height: 16),
         ],
+
         // TARJETA PRINCIPAL DEL VEHICULO
         Card(
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                Icon(
-                  vehiculo.tipo == 'Motocicleta'
-                      ? Icons.two_wheeler
-                      : Icons.directions_car,
-                  size: 100,
-                  color: colors.primary,
+                // Foto del modelo desde Wikipedia (ícono si no hay foto).
+                ImagenVehiculoTarjeta(
+                  key: ValueKey(vehiculo.id),
+                  marca: vehiculo.marca,
+                  modelo: vehiculo.modelo,
+                  esMotocicleta: vehiculo.tipo == 'Motocicleta',
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -398,7 +438,9 @@ class _MiVehiculoPageState extends State<MiVehiculoPage> {
             ),
           ),
         ),
+
         const SizedBox(height: 16),
+
         // ACCIONES RAPIDAS
         Card(
           child: Padding(
@@ -429,34 +471,62 @@ class _MiVehiculoPageState extends State<MiVehiculoPage> {
                   icon: Icons.shield,
                   label: 'Seguro',
                 ),
-                _QuickAction(
+                const _QuickAction(
                   icon: Icons.description,
                   label: 'Documentos',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DocumentosPage(
-                          vehiculoId: vehiculo.id,
-                        ),
-                      ),
-                    );
-                  },
                 ),
               ],
             ),
           ),
         ),
+
         const SizedBox(height: 16),
+
+        // LLAMADOS A REVISION (API de NHTSA)
+        Card(
+          child: ListTile(
+            leading: Icon(
+              Icons.campaign,
+              color: colors.primary,
+            ),
+            title: const Text('Llamados a revisión'),
+            subtitle: const Text(
+              'Consulta si tu vehículo tiene defectos reportados',
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LlamadosPantalla(
+                    viewModel: LlamadosViewModel(
+                      LlamadosRepository(NhtsaService()),
+                      marca: vehiculo.marca,
+                      modelo: vehiculo.modelo,
+                      anio: vehiculo.anio,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
         _InformationCard(
           colors: colors,
           vehiculo: vehiculo,
         ),
+
         const SizedBox(height: 16),
+
         _VehicleStatusCard(
           colors: colors,
         ),
+
         const SizedBox(height: 16),
+
         Card(
           child: ListTile(
             leading: Icon(
@@ -470,23 +540,30 @@ class _MiVehiculoPageState extends State<MiVehiculoPage> {
             trailing: const Icon(Icons.chevron_right),
           ),
         ),
+
         const SizedBox(height: 80),
       ],
     );
   }
 }
+
 // ============================================================
 // FORMULARIO DE REGISTRO
 // ============================================================
+
 class RegistroVehiculoPage extends StatefulWidget {
   const RegistroVehiculoPage({super.key});
+
   @override
   State<RegistroVehiculoPage> createState() =>
       _RegistroVehiculoPageState();
 }
+
 class _RegistroVehiculoPageState
     extends State<RegistroVehiculoPage> {
+
   final _formKey = GlobalKey<FormState>();
+
   final marcaController = TextEditingController();
   final modeloController = TextEditingController();
   final anioController = TextEditingController();
@@ -495,10 +572,13 @@ class _RegistroVehiculoPageState
   final kilometrajeController = TextEditingController();
   final cilindrajeController = TextEditingController();
   final ciudadController = TextEditingController();
+
   String tipo = 'Motocicleta';
   String combustible = 'Gasolina';
   String transmision = 'Manual';
+
   bool guardando = false;
+
   @override
   void dispose() {
     marcaController.dispose();
@@ -509,24 +589,71 @@ class _RegistroVehiculoPageState
     kilometrajeController.dispose();
     cilindrajeController.dispose();
     ciudadController.dispose();
+
     super.dispose();
   }
+
   String? validarTexto(String? value, String campo) {
     if (value == null || value.trim().isEmpty) {
       return 'Ingresa $campo';
     }
+
     return null;
   }
+
+  // ============================================================
+  // BUSCAR MODELO EN EL CATALOGO DE NHTSA
+  // ============================================================
+
+  Future<void> buscarModeloEnCatalogo() async {
+    final marca = marcaController.text.trim();
+    final anio = int.tryParse(anioController.text.trim());
+
+    if (marca.isEmpty || anio == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Escribe la marca y el año para buscar el modelo.'),
+        ),
+      );
+      return;
+    }
+
+    final modeloElegido = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SeleccionarModeloPantalla(
+          viewModel: CatalogoViewModel(
+            CatalogoRepository(NhtsaService()),
+            marca: marca,
+            anio: anio,
+            esMotocicleta: tipo == 'Motocicleta',
+          ),
+        ),
+      ),
+    );
+
+    // Si el usuario regresa sin elegir, se deja el campo como estaba.
+    if (!mounted || modeloElegido == null) return;
+
+    setState(() {
+      modeloController.text = modeloElegido;
+    });
+  }
+
   // ============================================================
   // GUARDAR DATOS DEL FORMULARIO
   // ============================================================
+
   Future<void> guardarVehiculo() async {
     if (guardando) return;
+
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
     final anio = int.tryParse(anioController.text);
     final kilometraje = int.tryParse(kilometrajeController.text);
+
     if (anio == null ||
         anio < 1900 ||
         anio > DateTime.now().year + 1) {
@@ -537,6 +664,7 @@ class _RegistroVehiculoPageState
       );
       return;
     }
+
     if (kilometraje == null || kilometraje < 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -545,7 +673,9 @@ class _RegistroVehiculoPageState
       );
       return;
     }
+
     final usuario = FirebaseAuth.instance.currentUser;
+
     if (usuario == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -556,6 +686,7 @@ class _RegistroVehiculoPageState
       );
       return;
     }
+
     final vehiculo = Vehiculo(
       tipo: tipo,
       marca: marcaController.text.trim(),
@@ -569,9 +700,11 @@ class _RegistroVehiculoPageState
       transmision: transmision,
       ciudad: ciudadController.text.trim(),
     );
+
     setState(() {
       guardando = true;
     });
+
     try {
       // Guardar directamente en la colección del usuario autenticado.
       final documento = await FirebaseFirestore.instance
@@ -579,6 +712,7 @@ class _RegistroVehiculoPageState
           .doc(usuario.uid)
           .collection('vehiculos')
           .add(vehiculo.toMap());
+
       // Crear el objeto con el ID generado por Firestore.
       final vehiculoGuardado = Vehiculo(
         id: documento.id,
@@ -594,13 +728,17 @@ class _RegistroVehiculoPageState
         transmision: vehiculo.transmision,
         ciudad: vehiculo.ciudad,
       );
+
       if (!mounted) return;
+
       Navigator.pop(context, vehiculoGuardado);
     } on FirebaseException catch (e) {
       if (!mounted) return;
+
       setState(() {
         guardando = false;
       });
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -610,9 +748,11 @@ class _RegistroVehiculoPageState
       );
     } catch (e) {
       if (!mounted) return;
+
       setState(() {
         guardando = false;
       });
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -622,9 +762,11 @@ class _RegistroVehiculoPageState
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registrar vehículo'),
@@ -640,13 +782,17 @@ class _RegistroVehiculoPageState
               size: 65,
               color: colors.primary,
             ),
+
             const SizedBox(height: 12),
+
             Text(
               'Información del vehículo',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleLarge,
             ),
+
             const SizedBox(height: 24),
+
             // TIPO DE VEHICULO
             DropdownButtonFormField<String>(
               value: tipo,
@@ -673,7 +819,9 @@ class _RegistroVehiculoPageState
                 }
               },
             ),
+
             const SizedBox(height: 16),
+
             // MARCA
             TextFormField(
               controller: marcaController,
@@ -686,20 +834,9 @@ class _RegistroVehiculoPageState
               validator: (value) =>
                   validarTexto(value, 'la marca'),
             ),
+
             const SizedBox(height: 16),
-            // MODELO
-            TextFormField(
-              controller: modeloController,
-              decoration: const InputDecoration(
-                labelText: 'Modelo',
-                hintText: 'Ej. FZ 2.0, Onix, Mazda 3',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.car_repair),
-              ),
-              validator: (value) =>
-                  validarTexto(value, 'el modelo'),
-            ),
-            const SizedBox(height: 16),
+
             // AÑO
             TextFormField(
               controller: anioController,
@@ -714,13 +851,37 @@ class _RegistroVehiculoPageState
                 if (value == null || value.trim().isEmpty) {
                   return 'Ingresa el año';
                 }
+
                 if (int.tryParse(value) == null) {
                   return 'Ingresa un año válido';
                 }
+
                 return null;
               },
             ),
+
             const SizedBox(height: 16),
+
+            // MODELO
+            TextFormField(
+              controller: modeloController,
+              decoration: InputDecoration(
+                labelText: 'Modelo',
+                hintText: 'Ej. FZ 2.0, Onix, Mazda 3',
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.car_repair),
+                suffixIcon: IconButton(
+                  onPressed: buscarModeloEnCatalogo,
+                  icon: const Icon(Icons.search),
+                  tooltip: 'Buscar modelo en el catálogo',
+                ),
+              ),
+              validator: (value) =>
+                  validarTexto(value, 'el modelo'),
+            ),
+
+            const SizedBox(height: 16),
+
             // PLACA
             TextFormField(
               controller: placaController,
@@ -734,7 +895,9 @@ class _RegistroVehiculoPageState
               validator: (value) =>
                   validarTexto(value, 'la placa'),
             ),
+
             const SizedBox(height: 16),
+
             // COLOR
             TextFormField(
               controller: colorController,
@@ -747,7 +910,9 @@ class _RegistroVehiculoPageState
               validator: (value) =>
                   validarTexto(value, 'el color'),
             ),
+
             const SizedBox(height: 16),
+
             // KILOMETRAJE
             TextFormField(
               controller: kilometrajeController,
@@ -762,13 +927,17 @@ class _RegistroVehiculoPageState
                 if (value == null || value.trim().isEmpty) {
                   return 'Ingresa el kilometraje';
                 }
+
                 if (int.tryParse(value) == null) {
                   return 'Ingresa un kilometraje válido';
                 }
+
                 return null;
               },
             ),
+
             const SizedBox(height: 16),
+
             // CILINDRAJE
             TextFormField(
               controller: cilindrajeController,
@@ -781,7 +950,9 @@ class _RegistroVehiculoPageState
               validator: (value) =>
                   validarTexto(value, 'el cilindraje'),
             ),
+
             const SizedBox(height: 16),
+
             // COMBUSTIBLE
             DropdownButtonFormField<String>(
               value: combustible,
@@ -816,7 +987,9 @@ class _RegistroVehiculoPageState
                 }
               },
             ),
+
             const SizedBox(height: 16),
+
             // TRANSMISION
             DropdownButtonFormField<String>(
               value: transmision,
@@ -851,7 +1024,9 @@ class _RegistroVehiculoPageState
                 }
               },
             ),
+
             const SizedBox(height: 16),
+
             // CIUDAD
             TextFormField(
               controller: ciudadController,
@@ -864,7 +1039,9 @@ class _RegistroVehiculoPageState
               validator: (value) =>
                   validarTexto(value, 'la ciudad'),
             ),
+
             const SizedBox(height: 24),
+
             // BOTON GUARDAR
             SizedBox(
               width: double.infinity,
@@ -889,6 +1066,7 @@ class _RegistroVehiculoPageState
                 ),
               ),
             ),
+
             const SizedBox(height: 30),
           ],
         ),
@@ -896,16 +1074,20 @@ class _RegistroVehiculoPageState
     );
   }
 }
+
 // ============================================================
 // TARJETA DE INFORMACION GENERAL
 // ============================================================
+
 class _InformationCard extends StatelessWidget {
   const _InformationCard({
     required this.colors,
     required this.vehiculo,
   });
+
   final ColorScheme colors;
   final Vehiculo vehiculo;
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -921,37 +1103,51 @@ class _InformationCard extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+
             const SizedBox(height: 16),
+
             _GeneralInfo(
               title: 'Tipo de vehículo',
               value: vehiculo.tipo,
             ),
+
             const Divider(),
+
             _GeneralInfo(
               title: 'Marca',
               value: vehiculo.marca,
             ),
+
             const Divider(),
+
             _GeneralInfo(
               title: 'Modelo',
               value: vehiculo.modelo,
             ),
+
             const Divider(),
+
             _GeneralInfo(
               title: 'Cilindraje',
               value: vehiculo.cilindraje,
             ),
+
             const Divider(),
+
             _GeneralInfo(
               title: 'Combustible',
               value: vehiculo.combustible,
             ),
+
             const Divider(),
+
             _GeneralInfo(
               title: 'Transmisión',
               value: vehiculo.transmision,
             ),
+
             const Divider(),
+
             _GeneralInfo(
               title: 'Color',
               value: vehiculo.color,
@@ -962,14 +1158,18 @@ class _InformationCard extends StatelessWidget {
     );
   }
 }
+
 // ============================================================
 // ESTADO DEL VEHICULO
 // ============================================================
+
 class _VehicleStatusCard extends StatelessWidget {
   const _VehicleStatusCard({
     required this.colors,
   });
+
   final ColorScheme colors;
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -985,7 +1185,9 @@ class _VehicleStatusCard extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+
             const SizedBox(height: 16),
+
             Row(
               children: [
                 Expanded(
@@ -996,7 +1198,9 @@ class _VehicleStatusCard extends StatelessWidget {
                     color: colors.primary,
                   ),
                 ),
+
                 const SizedBox(width: 8),
+
                 Expanded(
                   child: _StatusItem(
                     icon: Icons.description,
@@ -1013,16 +1217,20 @@ class _VehicleStatusCard extends StatelessWidget {
     );
   }
 }
+
 // ============================================================
 // ETIQUETA DE ESTADO
 // ============================================================
+
 class _StatusBadge extends StatelessWidget {
   const _StatusBadge({
     required this.label,
     required this.color,
   });
+
   final String label;
   final Color color;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -1045,21 +1253,26 @@ class _StatusBadge extends StatelessWidget {
     );
   }
 }
+
 // ============================================================
 // INFORMACION RAPIDA
 // ============================================================
+
 class _InfoItem extends StatelessWidget {
   const _InfoItem({
     required this.icon,
     required this.title,
     required this.subtitle,
   });
+
   final IconData icon;
   final String title;
   final String subtitle;
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+
     return Column(
       children: [
         Icon(
@@ -1067,7 +1280,9 @@ class _InfoItem extends StatelessWidget {
           size: 30,
           color: colors.primary,
         ),
+
         const SizedBox(height: 6),
+
         Text(
           title,
           style: const TextStyle(
@@ -1075,7 +1290,9 @@ class _InfoItem extends StatelessWidget {
             fontSize: 16,
           ),
         ),
+
         const SizedBox(height: 4),
+
         Text(
           subtitle,
           style: TextStyle(
@@ -1087,21 +1304,26 @@ class _InfoItem extends StatelessWidget {
     );
   }
 }
+
 // ============================================================
 // ACCIONES RAPIDAS
 // ============================================================
+
 class _QuickAction extends StatelessWidget {
   const _QuickAction({
     required this.icon,
     required this.label,
     this.onTap,
   });
+
   final IconData icon;
   final String label;
   final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+
     return Expanded(
       child: InkWell(
         onTap: onTap,
@@ -1115,7 +1337,9 @@ class _QuickAction extends StatelessWidget {
                 color: colors.onPrimaryContainer,
               ),
             ),
+
             const SizedBox(height: 6),
+
             Text(
               label,
               textAlign: TextAlign.center,
@@ -1127,16 +1351,20 @@ class _QuickAction extends StatelessWidget {
     );
   }
 }
+
 // ============================================================
 // INFORMACION GENERAL
 // ============================================================
+
 class _GeneralInfo extends StatelessWidget {
   const _GeneralInfo({
     required this.title,
     required this.value,
   });
+
   final String title;
   final String value;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -1150,7 +1378,9 @@ class _GeneralInfo extends StatelessWidget {
                 .onSurfaceVariant,
           ),
         ),
+
         const SizedBox(height: 4),
+
         Text(
           value,
           style: const TextStyle(
@@ -1161,9 +1391,11 @@ class _GeneralInfo extends StatelessWidget {
     );
   }
 }
+
 // ============================================================
 // ESTADO DE LOS COMPONENTES
 // ============================================================
+
 class _StatusItem extends StatelessWidget {
   const _StatusItem({
     required this.icon,
@@ -1171,10 +1403,12 @@ class _StatusItem extends StatelessWidget {
     required this.status,
     required this.color,
   });
+
   final IconData icon;
   final String title;
   final String status;
   final Color color;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -1194,9 +1428,13 @@ class _StatusItem extends StatelessWidget {
             color: color,
             size: 30,
           ),
+
           const SizedBox(height: 6),
+
           Text(title),
+
           const SizedBox(height: 4),
+
           Text(
             status,
             style: TextStyle(
