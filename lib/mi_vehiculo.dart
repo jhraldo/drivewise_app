@@ -4,6 +4,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'mantenimiento.dart';
 
+import 'data/repositories/catalogo_repository.dart';
+import 'data/repositories/llamados_repository.dart';
+import 'data/services/nhtsa_service.dart';
+import 'ui/catalogo/view_models/catalogo_view_model.dart';
+import 'ui/catalogo/widgets/seleccionar_modelo_pantalla.dart';
+import 'ui/llamados/view_models/llamados_view_model.dart';
+import 'ui/llamados/widgets/llamados_pantalla.dart';
+
 // ============================================================
 // MODELO DEL VEHICULO
 // ============================================================
@@ -473,6 +481,38 @@ class _MiVehiculoPageState extends State<MiVehiculoPage> {
 
         const SizedBox(height: 16),
 
+        // LLAMADOS A REVISION (API de NHTSA)
+        Card(
+          child: ListTile(
+            leading: Icon(
+              Icons.campaign,
+              color: colors.primary,
+            ),
+            title: const Text('Llamados a revisión'),
+            subtitle: const Text(
+              'Consulta si tu vehículo tiene defectos reportados',
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LlamadosPantalla(
+                    viewModel: LlamadosViewModel(
+                      LlamadosRepository(NhtsaService()),
+                      marca: vehiculo.marca,
+                      modelo: vehiculo.modelo,
+                      anio: vehiculo.anio,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
         _InformationCard(
           colors: colors,
           vehiculo: vehiculo,
@@ -558,6 +598,45 @@ class _RegistroVehiculoPageState
     }
 
     return null;
+  }
+
+  // ============================================================
+  // BUSCAR MODELO EN EL CATALOGO DE NHTSA
+  // ============================================================
+
+  Future<void> buscarModeloEnCatalogo() async {
+    final marca = marcaController.text.trim();
+    final anio = int.tryParse(anioController.text.trim());
+
+    if (marca.isEmpty || anio == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Escribe la marca y el año para buscar el modelo.'),
+        ),
+      );
+      return;
+    }
+
+    final modeloElegido = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SeleccionarModeloPantalla(
+          viewModel: CatalogoViewModel(
+            CatalogoRepository(NhtsaService()),
+            marca: marca,
+            anio: anio,
+            esMotocicleta: tipo == 'Motocicleta',
+          ),
+        ),
+      ),
+    );
+
+    // Si el usuario regresa sin elegir, se deja el campo como estaba.
+    if (!mounted || modeloElegido == null) return;
+
+    setState(() {
+      modeloController.text = modeloElegido;
+    });
   }
 
   // ============================================================
@@ -760,11 +839,16 @@ class _RegistroVehiculoPageState
             // MODELO
             TextFormField(
               controller: modeloController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Modelo',
                 hintText: 'Ej. FZ 2.0, Onix, Mazda 3',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.car_repair),
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.car_repair),
+                suffixIcon: IconButton(
+                  onPressed: buscarModeloEnCatalogo,
+                  icon: const Icon(Icons.search),
+                  tooltip: 'Buscar modelo en el catálogo',
+                ),
               ),
               validator: (value) =>
                   validarTexto(value, 'el modelo'),
