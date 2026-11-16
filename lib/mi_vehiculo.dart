@@ -11,6 +11,7 @@ import 'ui/catalogo/view_models/catalogo_view_model.dart';
 import 'ui/catalogo/widgets/seleccionar_modelo_pantalla.dart';
 import 'ui/llamados/view_models/llamados_view_model.dart';
 import 'ui/llamados/widgets/llamados_pantalla.dart';
+import 'ui/vehiculo/widgets/imagen_vehiculo_tarjeta.dart';
 
 // ============================================================
 // MODELO DEL VEHICULO
@@ -344,12 +345,12 @@ class _MiVehiculoPageState extends State<MiVehiculoPage> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                Icon(
-                  vehiculo.tipo == 'Motocicleta'
-                      ? Icons.two_wheeler
-                      : Icons.directions_car,
-                  size: 100,
-                  color: colors.primary,
+                // Foto del modelo desde Wikipedia (ícono si no hay foto).
+                ImagenVehiculoTarjeta(
+                  key: ValueKey(vehiculo.id),
+                  marca: vehiculo.marca,
+                  modelo: vehiculo.modelo,
+                  esMotocicleta: vehiculo.tipo == 'Motocicleta',
                 ),
                 const SizedBox(height: 12),
                 Row(
