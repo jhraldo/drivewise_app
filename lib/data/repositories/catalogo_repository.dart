@@ -14,20 +14,46 @@ class CatalogoRepository {
     required bool esMotocicleta,
   }) {
     return proteger(() async {
-      final json = await _service.obtenerModelos(
-        marca: marca,
-        anio: anio,
-        esMotocicleta: esMotocicleta,
+      // Modelos de moto de la marca en ese año.
+      final motos = _convertir(
+        await _service.obtenerModelos(
+          marca: marca,
+          anio: anio,
+          esMotocicleta: true,
+        ),
       );
 
-      final lista = json['Results'] as List<dynamic>;
+      if (esMotocicleta) {
+        return _sinRepetidos(motos);
+      }
 
-      final modelos = lista
-          .map((e) => ModeloVehiculo.fromJson(e as Map<String, dynamic>))
+      // Para un automóvil se piden todos los modelos y se quitan las motos.
+      // No se filtra por el tipo "car" porque las camionetas (CX-5, Pilot)
+      // están clasificadas como otro tipo y se perderían.
+      final todos = _convertir(
+        await _service.obtenerModelos(
+          marca: marca,
+          anio: anio,
+          esMotocicleta: false,
+        ),
+      );
+
+      final nombresMotos = motos.map((m) => m.nombre.toUpperCase()).toSet();
+
+      final automoviles = todos
+          .where((m) => !nombresMotos.contains(m.nombre.toUpperCase()))
           .toList();
 
-      return _sinRepetidos(modelos);
+      return _sinRepetidos(automoviles);
     });
+  }
+
+  List<ModeloVehiculo> _convertir(Map<String, dynamic> json) {
+    final lista = json['Results'] as List<dynamic>;
+
+    return lista
+        .map((e) => ModeloVehiculo.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   // El catálogo puede repetir un modelo; se deja uno por nombre y en orden alfabético.

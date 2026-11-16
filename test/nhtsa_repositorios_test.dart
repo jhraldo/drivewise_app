@@ -11,6 +11,8 @@ import 'package:drivewise_app/data/services/nhtsa_service.dart';
 // Servicio falso: devuelve un JSON fijo o lanza el error indicado, sin usar la red.
 class ServicioFalso implements NhtsaService {
   Map<String, dynamic> respuesta = {};
+  // Lo que responde el catálogo cuando se filtra por motocicleta.
+  Map<String, dynamic> respuestaMotos = {'Count': 0, 'Results': []};
   Object? errorALanzar;
 
   Future<Map<String, dynamic>> _responder() async {
@@ -23,8 +25,10 @@ class ServicioFalso implements NhtsaService {
     required String marca,
     required int anio,
     required bool esMotocicleta,
-  }) =>
-      _responder();
+  }) async {
+    if (esMotocicleta && errorALanzar == null) return respuestaMotos;
+    return _responder();
+  }
 
   @override
   Future<Map<String, dynamic>> obtenerLlamados({
@@ -59,6 +63,45 @@ void main() {
     );
 
     expect(modelos.map((m) => m.nombre).toList(), ['CX-5', 'Mazda3']);
+  });
+
+  group('separación entre automóviles y motos', () {
+    setUp(() {
+      servicio.respuesta = {
+        'Count': 3,
+        'Results': [
+          {'Make_ID': 1, 'Make_Name': 'HONDA', 'Model_ID': 1, 'Model_Name': 'Pilot'},
+          {'Make_ID': 1, 'Make_Name': 'HONDA', 'Model_ID': 2, 'Model_Name': 'CB500F'},
+          {'Make_ID': 1, 'Make_Name': 'HONDA', 'Model_ID': 3, 'Model_Name': 'Accord'},
+        ],
+      };
+      servicio.respuestaMotos = {
+        'Count': 1,
+        'Results': [
+          {'Make_ID': 1, 'Make_Name': 'HONDA', 'Model_ID': 2, 'Model_Name': 'CB500F'},
+        ],
+      };
+    });
+
+    test('un automóvil no muestra modelos de moto', () async {
+      final modelos = await CatalogoRepository(servicio).buscarModelos(
+        marca: 'honda',
+        anio: 2023,
+        esMotocicleta: false,
+      );
+
+      expect(modelos.map((m) => m.nombre).toList(), ['Accord', 'Pilot']);
+    });
+
+    test('una motocicleta muestra solo motos', () async {
+      final modelos = await CatalogoRepository(servicio).buscarModelos(
+        marca: 'honda',
+        anio: 2023,
+        esMotocicleta: true,
+      );
+
+      expect(modelos.map((m) => m.nombre).toList(), ['CB500F']);
+    });
   });
 
   test('los llamados se leen de "results" en minúscula', () async {

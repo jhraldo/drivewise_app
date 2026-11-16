@@ -398,7 +398,7 @@ DriveWise consume dos APIs públicas de la NHTSA (National Highway Traffic Safet
 
 | API | Endpoint | Uso en la aplicación |
 |---|---|---|
-| Catálogo vPIC | `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/{marca}/modelyear/{año}?format=json` | Botón de búsqueda en el campo Modelo del registro de vehículo. Para motocicletas se agrega `/vehicletype/motorcycle`. |
+| Catálogo vPIC | `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/{marca}/modelyear/{año}?format=json` | Botón de búsqueda en el campo Modelo del registro de vehículo. Para motocicletas se agrega `/vehicletype/motorcycle`. Para automóviles se piden todos los modelos y se quitan los de moto, porque las camionetas están clasificadas como otro tipo de vehículo. |
 | Llamados a revisión | `https://api.nhtsa.gov/recalls/recallsByVehicle?make={marca}&model={modelo}&modelYear={año}` | Tarjeta "Llamados a revisión" en Mi vehículo, con lista y detalle de cada llamado. |
 
 **Organización del código (MVVM y Repository):**
