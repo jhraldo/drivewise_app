@@ -21,7 +21,7 @@ redondeados, porque la imagen se sale por encima.
 ### Cuándo usarlo y cuándo no
 
 Es la mejor opción para redondear una imagen, por ejemplo la foto de un producto en una tarjeta. No
-conviene cuando el contenido es un `Container` con color o decoración: ahí es más barato usar
+conviene cuando el contenido es un `Container` con color o decoración: ahí es mejor usar
 `BoxDecoration(borderRadius: ...)`, porque recortar cuesta más que simplemente pintar. Si lo que
 quiero es un círculo completo, `ClipOval` o `CircleAvatar` son más directos.
 
