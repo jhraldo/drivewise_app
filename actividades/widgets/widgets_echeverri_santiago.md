@@ -149,6 +149,7 @@ sigue reservado.
 | `opacity` | Nivel de transparencia, de 0.0 a 1.0. | `opacity: 0.5` |
 | `child` | El widget al que se le aplica la transparencia. | `child: Image.asset('papa.png')` |
 | `alwaysIncludeSemantics` | Si el hijo sigue siendo leído por lectores de pantalla cuando es invisible. | `alwaysIncludeSemantics: true` |
+| `key` | Identificador del widget, ayuda a Flutter a reconocerlo cuando una lista se reordena o cambia. | `key: ValueKey('papa')` |
 
 Nota: `Opacity` tiene pocas propiedades, pero `opacity` es la que realmente cambia el resultado.
 
