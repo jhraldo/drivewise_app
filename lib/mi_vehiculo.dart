@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'presentation/documentos_page.dart';
 
 import 'mantenimiento.dart';
 
@@ -471,10 +472,20 @@ class _MiVehiculoPageState extends State<MiVehiculoPage> {
                   icon: Icons.shield,
                   label: 'Seguro',
                 ),
-                const _QuickAction(
-                  icon: Icons.description,
-                  label: 'Documentos',
-                ),
+                _QuickAction(
+  icon: Icons.description,
+  label: 'Documentos',
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DocumentosPage(
+          vehiculoId: vehiculo.id,
+        ),
+      ),
+    );
+  },
+),
               ],
             ),
           ),
