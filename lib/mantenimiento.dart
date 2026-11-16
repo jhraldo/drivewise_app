@@ -4,11 +4,36 @@ class MantenimientoPage extends StatelessWidget {
   const MantenimientoPage({super.key});
 
   static const _services = [
-    MaintenanceItem('Cambio de aceite y filtro', 'Cada 3.000 km', 'Faltan 1.250 km', Icons.oil_barrel),
-    MaintenanceItem('Revisión de frenos', 'Cada 5.000 km', 'Faltan 2.000 km', Icons.disc_full),
-    MaintenanceItem('Cambio de llantas', 'Cada 15.000 km', 'Faltan 2.550 km', Icons.tire_repair),
-    MaintenanceItem('Revisión de batería', 'Cada 10.000 km', 'Faltan 4.500 km', Icons.battery_full),
-    MaintenanceItem('Cambio de filtros', 'Cada 6.000 km', 'Faltan 3.550 km', Icons.filter_alt),
+    MaintenanceItem(
+      'Cambio de aceite y filtro',
+      'Cada 3.000 km',
+      'Faltan 1.250 km',
+      Icons.oil_barrel,
+    ),
+    MaintenanceItem(
+      'Revisión de frenos',
+      'Cada 5.000 km',
+      'Faltan 2.000 km',
+      Icons.disc_full,
+    ),
+    MaintenanceItem(
+      'Cambio de llantas',
+      'Cada 15.000 km',
+      'Faltan 2.550 km',
+      Icons.tire_repair,
+    ),
+    MaintenanceItem(
+      'Revisión de batería',
+      'Cada 10.000 km',
+      'Faltan 4.500 km',
+      Icons.battery_full,
+    ),
+    MaintenanceItem(
+      'Cambio de filtros',
+      'Cada 6.000 km',
+      'Faltan 3.550 km',
+      Icons.filter_alt,
+    ),
   ];
 
   @override
@@ -46,7 +71,13 @@ class MantenimientoPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Yamaha FZ 2.0', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text(
+                          'Yamaha FZ 2.0',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         SizedBox(height: 4),
                         Text('ABC12D • 2022'),
                         SizedBox(height: 4),
@@ -97,13 +128,20 @@ class _SummaryTab extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Icon(Icons.event_available, size: 42, color: colors.onPrimaryContainer),
+                Icon(
+                  Icons.event_available,
+                  size: 42,
+                  color: colors.onPrimaryContainer,
+                ),
                 const SizedBox(width: 16),
                 const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Próximo mantenimiento', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        'Próximo mantenimiento',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       SizedBox(height: 4),
                       Text('Cambio de aceite y filtro'),
                       SizedBox(height: 4),
@@ -121,20 +159,46 @@ class _SummaryTab extends StatelessWidget {
         Card(
           child: Column(
             children: [
-              _StateRow(icon: Icons.settings, label: 'Motor', status: 'Óptimo', color: colors.primary),
+              _StateRow(
+                icon: Icons.settings,
+                label: 'Motor',
+                status: 'Óptimo',
+                color: colors.primary,
+              ),
               const Divider(height: 1),
-              _StateRow(icon: Icons.tire_repair, label: 'Llantas', status: 'Óptimo', color: colors.primary),
+              _StateRow(
+                icon: Icons.tire_repair,
+                label: 'Llantas',
+                status: 'Óptimo',
+                color: colors.primary,
+              ),
               const Divider(height: 1),
-              _StateRow(icon: Icons.disc_full, label: 'Frenos', status: 'Revisar', color: colors.tertiary),
+              _StateRow(
+                icon: Icons.disc_full,
+                label: 'Frenos',
+                status: 'Revisar',
+                color: colors.tertiary,
+              ),
               const Divider(height: 1),
-              _StateRow(icon: Icons.battery_full, label: 'Batería', status: 'Óptimo', color: colors.primary),
+              _StateRow(
+                icon: Icons.battery_full,
+                label: 'Batería',
+                status: 'Óptimo',
+                color: colors.primary,
+              ),
             ],
           ),
         ),
         const SizedBox(height: 16),
-        Text('Próximos servicios', style: Theme.of(context).textTheme.titleLarge),
+        Text(
+          'Próximos servicios',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
         const SizedBox(height: 8),
-        SizedBox(height: 370, child: _ServicesList(services: services, shrinkWrap: true)),
+        SizedBox(
+          height: 370,
+          child: _ServicesList(services: services, shrinkWrap: true),
+        ),
       ],
     );
   }
@@ -161,14 +225,20 @@ class _ServicesList extends StatelessWidget {
               backgroundColor: colors.primaryContainer,
               child: Icon(service.icon, color: colors.onPrimaryContainer),
             ),
-            title: Text(service.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(
+              service.title,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             subtitle: Text(service.frequency),
             trailing: SizedBox(
               width: 88,
               child: Text(
                 service.remaining,
                 textAlign: TextAlign.end,
-                style: TextStyle(color: colors.primary, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: colors.primary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -205,7 +275,12 @@ class _HistoryTab extends StatelessWidget {
 }
 
 class _StateRow extends StatelessWidget {
-  const _StateRow({required this.icon, required this.label, required this.status, required this.color});
+  const _StateRow({
+    required this.icon,
+    required this.label,
+    required this.status,
+    required this.color,
+  });
   final IconData icon;
   final String label;
   final String status;
@@ -213,8 +288,11 @@ class _StateRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListTile(
-        leading: Icon(icon, color: color),
-        title: Text(label),
-        trailing: Text(status, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
-      );
+    leading: Icon(icon, color: color),
+    title: Text(label),
+    trailing: Text(
+      status,
+      style: TextStyle(color: color, fontWeight: FontWeight.bold),
+    ),
+  );
 }

@@ -9,26 +9,14 @@ class NuevoGastoPage extends StatefulWidget {
 }
 
 class _NuevoGastoPageState extends State<NuevoGastoPage> {
-  final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController descripcionController =
-      TextEditingController();
+  final formKey = GlobalKey<FormState>();
 
-  final TextEditingController kilometrajeController =
-      TextEditingController();
-
-  final TextEditingController valorController =
-      TextEditingController();
-
-  final TextEditingController proveedorController =
-      TextEditingController();
-
-  final TextEditingController notasController =
-      TextEditingController();
-
-  String categoriaSeleccionada = 'Aceite';
-
-  DateTime fechaSeleccionada = DateTime.now();
+  final descripcionController = TextEditingController();
+  final kilometrajeController = TextEditingController();
+  final valorController = TextEditingController();
+  final proveedorController = TextEditingController();
+  final notasController = TextEditingController();
 
   final List<String> categorias = [
     'Aceite',
@@ -40,6 +28,20 @@ class _NuevoGastoPageState extends State<NuevoGastoPage> {
     'Otros',
   ];
 
+  String categoriaSeleccionada = 'Aceite';
+  DateTime fechaSeleccionada = DateTime.now();
+
+  @override
+  void dispose() {
+    descripcionController.dispose();
+    kilometrajeController.dispose();
+    valorController.dispose();
+    proveedorController.dispose();
+    notasController.dispose();
+
+    super.dispose();
+  }
+
   Future<void> seleccionarFecha() async {
     final fecha = await showDatePicker(
       context: context,
@@ -48,15 +50,20 @@ class _NuevoGastoPageState extends State<NuevoGastoPage> {
       lastDate: DateTime(2035),
     );
 
-    if (fecha != null) {
-      setState(() {
-        fechaSeleccionada = fecha;
-      });
+    if (fecha == null) {
+      return;
     }
+
+    if (!mounted) return;
+
+    setState(() {
+      fechaSeleccionada = fecha;
+    });
   }
 
   void guardarGasto() {
-    if (!_formKey.currentState!.validate()) {
+
+    if (!formKey.currentState!.validate()) {
       return;
     }
 
@@ -79,11 +86,13 @@ class _NuevoGastoPageState extends State<NuevoGastoPage> {
       appBar: AppBar(
         title: const Text('Nuevo gasto'),
       ),
+
       body: Form(
-        key: _formKey,
+        key: formKey,
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
+
             Text(
               'Registrar gasto',
               style: Theme.of(context).textTheme.headlineSmall,
@@ -92,22 +101,26 @@ class _NuevoGastoPageState extends State<NuevoGastoPage> {
             const SizedBox(height: 24),
 
             DropdownButtonFormField<String>(
-              value: categoriaSeleccionada,
+              initialValue: categoriaSeleccionada,
               decoration: const InputDecoration(
                 labelText: 'Tipo de gasto',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.category_outlined),
               ),
+
               items: categorias.map((categoria) {
-                return DropdownMenuItem(
+                return DropdownMenuItem<String>(
                   value: categoria,
                   child: Text(categoria),
                 );
               }).toList(),
-              onChanged: (valor) {
-                setState(() {
-                  categoriaSeleccionada = valor!;
-                });
+
+              onChanged: (valorSeleccionado) {
+                if (valorSeleccionado != null) {
+                  setState(() {
+                    categoriaSeleccionada = valorSeleccionado;
+                  });
+                }
               },
             ),
 
@@ -121,10 +134,12 @@ class _NuevoGastoPageState extends State<NuevoGastoPage> {
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.description_outlined),
               ),
+
               validator: (valor) {
                 if (valor == null || valor.isEmpty) {
                   return 'Ingresa una descripción';
                 }
+
                 return null;
               },
             ),
@@ -139,6 +154,7 @@ class _NuevoGastoPageState extends State<NuevoGastoPage> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.calendar_today_outlined),
                 ),
+
                 child: Text(
                   '${fechaSeleccionada.day}/${fechaSeleccionada.month}/${fechaSeleccionada.year}',
                 ),
@@ -156,10 +172,12 @@ class _NuevoGastoPageState extends State<NuevoGastoPage> {
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.speed_outlined),
               ),
+
               validator: (valor) {
                 if (valor == null || valor.isEmpty) {
                   return 'Ingresa el kilometraje';
                 }
+
                 return null;
               },
             ),
@@ -175,13 +193,20 @@ class _NuevoGastoPageState extends State<NuevoGastoPage> {
                 prefixIcon: Icon(Icons.attach_money),
                 border: OutlineInputBorder(),
               ),
-              validator: (valor) {
-                if (valor == null || valor.isEmpty) {
+
+              validator: (valorIngresado) {
+                if (valorIngresado == null || valorIngresado.isEmpty) {
                   return 'Ingresa el valor';
                 }
 
-                if (double.tryParse(valor) == null) {
+                final valor = double.tryParse(valorIngresado);
+
+                if (valor == null) {
                   return 'Ingresa un valor válido';
+                }
+
+                if (valor <= 0) {
+                  return 'El valor debe ser mayor que cero';
                 }
 
                 return null;

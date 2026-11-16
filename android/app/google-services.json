@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "372353034841",
+    "project_id": "drivewise-99cd6",
+    "storage_bucket": "drivewise-99cd6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372353034841:android:5bcbf1e0ca8dca2cb29f48",
+        "android_client_info": {
+          "package_name": "com.drivewise.drivewise_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAq6Bm7qkl9LDX5iY7zIgGnpgNi__ph-68"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

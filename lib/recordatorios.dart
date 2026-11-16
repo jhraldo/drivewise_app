@@ -7,9 +7,7 @@ class RecordatoriosPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Recordatorios'),
-      ),
+      appBar: AppBar(title: const Text('Recordatorios')),
 
       body: ListView(
         padding: const EdgeInsets.all(20),
@@ -98,22 +96,16 @@ class RecordatorioCard extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
 
-        leading: CircleAvatar(
-          child: Icon(icon),
-        ),
+        leading: CircleAvatar(child: Icon(icon)),
 
         title: Text(
           titulo,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
 
         subtitle: Text(descripcion),
 
-        trailing: const Icon(
-          Icons.chevron_right,
-        ),
+        trailing: const Icon(Icons.chevron_right),
       ),
     );
   }
