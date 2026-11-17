@@ -400,7 +400,6 @@ DriveWise consume dos APIs públicas de la NHTSA (National Highway Traffic Safet
 |---|---|---|
 | Catálogo vPIC | `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/{marca}/modelyear/{año}?format=json` | Botón de búsqueda en el campo Modelo del registro de vehículo. Para motocicletas se agrega `/vehicletype/motorcycle`. Para automóviles se piden todos los modelos y se quitan los de moto, porque las camionetas están clasificadas como otro tipo de vehículo. |
 | Llamados a revisión | `https://api.nhtsa.gov/recalls/recallsByVehicle?make={marca}&model={modelo}&modelYear={año}` | Tarjeta "Llamados a revisión" en Mi vehículo, con lista y detalle de cada llamado. |
-
 | Wikipedia (resumen de artículo) | `https://en.wikipedia.org/api/rest_v1/page/summary/{Marca_Modelo}` | Foto del modelo en la tarjeta principal de Mi vehículo. Si no hay artículo o foto, se muestra el ícono. |
 
 La API de Wikipedia no pide clave, pero Wikimedia pide identificar la aplicación con el encabezado `User-Agent`; por eso `WikipediaService` lo envía en la petición y en la descarga de la imagen. Las imágenes tienen licencia libre y se muestran con la atribución "Imagen: Wikipedia". La foto corresponde al modelo, no necesariamente al año del vehículo.
