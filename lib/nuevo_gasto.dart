@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
 import 'gastos.dart';
 
 class NuevoGastoPage extends StatefulWidget {
@@ -62,22 +64,59 @@ class _NuevoGastoPageState extends State<NuevoGastoPage> {
   }
 
   void guardarGasto() {
-
     if (!formKey.currentState!.validate()) {
       return;
     }
 
     final nuevoGasto = Gasto(
       categoria: categoriaSeleccionada,
-      descripcion: descripcionController.text,
+      descripcion: descripcionController.text.trim(),
       fecha: fechaSeleccionada,
-      kilometraje: kilometrajeController.text,
-      valor: double.parse(valorController.text),
-      proveedor: proveedorController.text,
-      notas: notasController.text,
+      kilometraje: int.parse(kilometrajeController.text.trim()),
+      valor: double.parse(valorController.text.trim()),
+      proveedor: proveedorController.text.trim(),
+      notas: notasController.text.trim(),
     );
 
-    Navigator.pop(context, nuevoGasto);
+    // Se guarda el ScaffoldMessenger antes de cerrar la pantalla,
+    // para poder mostrar mensajes en la pantalla de gastos.
+    final messenger = ScaffoldMessenger.of(context);
+
+    // Sin internet, Firestore guarda el gasto en la copia local y lo
+    // envía cuando vuelve la conexión. El Future de add() solo termina
+    // cuando el servidor confirma, por eso NO se espera aquí: así la
+    // pantalla no se queda bloqueada sin conexión.
+    enviarGasto(nuevoGasto, messenger);
+
+    messenger.showSnackBar(
+      const SnackBar(content: Text('Gasto registrado')),
+    );
+
+    Navigator.pop(context);
+  }
+
+  // Envía el gasto a Firestore y avisa si el servidor lo rechaza.
+  Future<void> enviarGasto(
+    Gasto gasto,
+    ScaffoldMessengerState messenger,
+  ) async {
+    try {
+      await coleccionGastos().add(gasto.toMap());
+    } on FirebaseException catch (e) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            e.code == 'permission-denied'
+                ? 'No tienes permiso para guardar gastos. Inicia sesión.'
+                : 'No se pudo guardar el gasto: ${e.code}',
+          ),
+        ),
+      );
+    } catch (e) {
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Ocurrió un error al guardar el gasto.')),
+      );
+    }
   }
 
   @override
@@ -178,6 +217,10 @@ class _NuevoGastoPageState extends State<NuevoGastoPage> {
                   return 'Ingresa el kilometraje';
                 }
 
+                if (int.tryParse(valor.trim()) == null) {
+                  return 'Ingresa solo números, sin puntos';
+                }
+
                 return null;
               },
             ),
@@ -199,7 +242,7 @@ class _NuevoGastoPageState extends State<NuevoGastoPage> {
                   return 'Ingresa el valor';
                 }
 
-                final valor = double.tryParse(valorIngresado);
+                final valor = double.tryParse(valorIngresado.trim());
 
                 if (valor == null) {
                   return 'Ingresa un valor válido';
