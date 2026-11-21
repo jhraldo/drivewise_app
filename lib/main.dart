@@ -4,9 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
 
+import 'avisos.dart';
+
 import 'gastos.dart';
 
 import 'recordatorios.dart';
+
+import 'soat.dart';
 
 import 'login.dart';
 
@@ -26,6 +30,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Prepara las notificaciones locales y pide el permiso (Android 13+).
+  await iniciarAvisos();
 
   runApp(const MainApp());
 }
@@ -322,6 +329,51 @@ class _DashboardPageState extends State<DashboardPage> {
     } else {
       _vehiculosStream = const Stream.empty();
     }
+
+    // Al abrir el dashboard se revisa si el SOAT vence pronto
+    // y, si es así, se muestra la alerta emergente.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) revisarVencimientoSoat(context);
+    });
+  }
+
+  void _abrir(Widget pantalla) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => pantalla),
+    );
+  }
+
+  Widget _accesosRapidos() {
+    return Column(
+      children: [
+        Card(
+          child: ListTile(
+            leading: const Icon(Icons.receipt_long_outlined),
+            title: const Text(
+              'Gastos',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            subtitle: const Text('Registra y consulta los gastos del vehículo'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _abrir(const GastosPage()),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: ListTile(
+            leading: const Icon(Icons.notifications_active_outlined),
+            title: const Text(
+              'Recordatorios',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            subtitle: const Text('SOAT y próximos vencimientos'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _abrir(const RecordatoriosPage()),
+          ),
+        ),
+      ],
+    );
   }
 
   Future<void> _cerrarSesion() async {
@@ -565,6 +617,8 @@ class _DashboardPageState extends State<DashboardPage> {
             ],
           ),
         ),
+        const SizedBox(height: 22),
+        _accesosRapidos(),
       ],
     );
   }
@@ -617,6 +671,8 @@ class _DashboardPageState extends State<DashboardPage> {
           icon: const Icon(Icons.add),
           label: const Text('Agregar otro vehículo'),
         ),
+        const SizedBox(height: 22),
+        _accesosRapidos(),
       ],
     );
   }

@@ -1,74 +1,184 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'detalle_soat.dart';
 
-class RecordatoriosPage extends StatelessWidget {
+import 'detalle_soat.dart';
+import 'soat.dart';
+
+class RecordatoriosPage extends StatefulWidget {
   const RecordatoriosPage({super.key});
+
+  @override
+  State<RecordatoriosPage> createState() => _RecordatoriosPageState();
+}
+
+class _RecordatoriosPageState extends State<RecordatoriosPage> {
+  Soat? soat;
+  bool cargando = true;
+  String? errorCarga;
+
+  @override
+  void initState() {
+    super.initState();
+    cargar(mostrarAlerta: true);
+  }
+
+  Future<void> cargar({bool mostrarAlerta = false}) async {
+    setState(() {
+      cargando = true;
+      errorCarga = null;
+    });
+
+    try {
+      final resultado = await cargarSoat();
+      if (!mounted) return;
+
+      setState(() {
+        soat = resultado;
+        cargando = false;
+      });
+
+      // Pop-up de alerta según la fecha de vencimiento.
+      if (mostrarAlerta && resultado != null) {
+        await mostrarAlertaSoat(context, resultado);
+      }
+    } on FirebaseException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        cargando = false;
+        errorCarga = 'No se pudieron consultar los recordatorios: ${e.code}';
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        cargando = false;
+        errorCarga = 'Ocurrió un error al consultar los recordatorios.';
+      });
+    }
+  }
+
+  Future<void> abrirSoat() async {
+    final guardado = await Navigator.push<Soat>(
+      context,
+      MaterialPageRoute(builder: (context) => const DetalleSoatPage()),
+    );
+
+    if (guardado == null || !mounted) return;
+
+    // Se usa el SOAT recién guardado y se revisa si hay que avisar.
+    setState(() => soat = guardado);
+    await mostrarAlertaSoat(context, guardado);
+  }
+
+  Color colorSoat(Soat s) {
+    if (s.vencido) return Colors.red;
+    if (s.porVencer) return Colors.orange;
+    return Colors.green;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Recordatorios')),
+      body: RefreshIndicator(
+        onRefresh: () => cargar(mostrarAlerta: true),
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            Text(
+              'Próximos vencimientos',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Mantente al día con los documentos y mantenimientos de tu vehículo.',
+            ),
+            const SizedBox(height: 24),
 
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          Text(
-            'Próximos vencimientos',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+            _tarjetaSoat(),
 
-          const SizedBox(height: 8),
-
-          const Text(
-            'Mantente al día con los documentos y mantenimientos de tu vehículo.',
-          ),
-
-          const SizedBox(height: 24),
-
-          RecordatorioCard(
-            icon: Icons.description_outlined,
-            titulo: 'SOAT',
-            descripcion: 'Vence en 28 días',
-            colorIcono: Colors.red,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const DetalleSoatPage(),
-                ),
-              );
-            },
-          ),
-
-          RecordatorioCard(
-            icon: Icons.fact_check_outlined,
-            titulo: 'Tecnomecánica',
-            descripcion: 'Vence en 45 días',
-            colorIcono: Colors.orange,
-          ),
-
-          RecordatorioCard(
-            icon: Icons.shield_outlined,
-            titulo: 'Seguro',
-            descripcion: 'Vence en 60 días',
-            colorIcono: Colors.blue,
-          ),
-
-          RecordatorioCard(
-            icon: Icons.oil_barrel_outlined,
-            titulo: 'Cambio de aceite',
-            descripcion: 'Programado en 1.250 km',
-            colorIcono: Colors.amber,
-          ),
-
-          RecordatorioCard(
-            icon: Icons.tire_repair,
-            titulo: 'Revisión de llantas',
-            descripcion: 'Programada en 2.000 km',
-            colorIcono: Colors.green,
-          ),
-        ],
+            const RecordatorioCard(
+              icon: Icons.fact_check_outlined,
+              titulo: 'Tecnomecánica',
+              descripcion: 'Próximamente',
+              colorIcono: Colors.orange,
+            ),
+            const RecordatorioCard(
+              icon: Icons.shield_outlined,
+              titulo: 'Seguro',
+              descripcion: 'Próximamente',
+              colorIcono: Colors.blue,
+            ),
+            const RecordatorioCard(
+              icon: Icons.oil_barrel_outlined,
+              titulo: 'Cambio de aceite',
+              descripcion: 'Próximamente',
+              colorIcono: Colors.amber,
+            ),
+            const RecordatorioCard(
+              icon: Icons.tire_repair,
+              titulo: 'Revisión de llantas',
+              descripcion: 'Próximamente',
+              colorIcono: Colors.green,
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _tarjetaSoat() {
+    if (cargando) {
+      return const Card(
+        margin: EdgeInsets.only(bottom: 12),
+        child: ListTile(
+          leading: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+          title: Text('SOAT', style: TextStyle(fontWeight: FontWeight.bold)),
+          subtitle: Text('Cargando...'),
+        ),
+      );
+    }
+
+    if (errorCarga != null) {
+      return Card(
+        margin: const EdgeInsets.only(bottom: 12),
+        child: ListTile(
+          leading: const Icon(Icons.error_outline, color: Colors.red),
+          title: const Text(
+            'SOAT',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(errorCarga!),
+          trailing: IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => cargar(mostrarAlerta: true),
+          ),
+        ),
+      );
+    }
+
+    final s = soat;
+
+    if (s == null) {
+      return RecordatorioCard(
+        icon: Icons.description_outlined,
+        titulo: 'SOAT',
+        descripcion: 'Sin registrar. Toca para ingresar la fecha de vencimiento.',
+        colorIcono: Colors.grey,
+        onTap: abrirSoat,
+      );
+    }
+
+    return RecordatorioCard(
+      icon: Icons.description_outlined,
+      titulo: 'SOAT • ${s.estado}',
+      descripcion:
+          '${s.descripcionVencimiento} (${formatoFecha(s.fechaVencimiento)})',
+      colorIcono: colorSoat(s),
+      onTap: abrirSoat,
     );
   }
 }
@@ -95,17 +205,16 @@ class RecordatorioCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
         onTap: onTap,
-
-        leading: CircleAvatar(child: Icon(icon)),
-
+        leading: CircleAvatar(
+          backgroundColor: colorIcono.withValues(alpha: 0.15),
+          child: Icon(icon, color: colorIcono),
+        ),
         title: Text(
           titulo,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-
         subtitle: Text(descripcion),
-
-        trailing: const Icon(Icons.chevron_right),
+        trailing: onTap == null ? null : const Icon(Icons.chevron_right),
       ),
     );
   }
