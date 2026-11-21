@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Necesario para consultar las APIs de NHTSA en la versión de release. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <!-- Desde Android 13 se necesita este permiso para mostrar notificaciones. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application

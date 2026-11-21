@@ -392,6 +392,44 @@ También quedan pendientes, entre otros aspectos, completar la validación del i
 
 La implementación de estas funciones se realizará progresivamente y utilizando los contenidos vistos en clase.
 
+### 14.6 Integración con APIs externas (NHTSA y Wikipedia)
+
+DriveWise consume dos APIs públicas de la NHTSA (National Highway Traffic Safety Administration de Estados Unidos). Además, consulta la API de Wikipedia para mostrar la foto del modelo. Ninguna de estas APIs requiere clave, por lo que el repositorio no contiene credenciales para ellas.
+
+| API | Endpoint | Uso en la aplicación |
+|---|---|---|
+| Catálogo vPIC | `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/{marca}/modelyear/{año}?format=json` | Botón de búsqueda en el campo Modelo del registro de vehículo. Para motocicletas se agrega `/vehicletype/motorcycle`. Para automóviles se piden todos los modelos y se quitan los de moto, porque las camionetas están clasificadas como otro tipo de vehículo. |
+| Llamados a revisión | `https://api.nhtsa.gov/recalls/recallsByVehicle?make={marca}&model={modelo}&modelYear={año}` | Tarjeta "Llamados a revisión" en Mi vehículo, con lista y detalle de cada llamado. |
+| Wikipedia (resumen de artículo) | `https://en.wikipedia.org/api/rest_v1/page/summary/{Marca_Modelo}` | Foto del modelo en la tarjeta principal de Mi vehículo. Si no hay artículo o foto, se muestra el ícono. |
+
+La API de Wikipedia no pide clave, pero Wikimedia pide identificar la aplicación con el encabezado `User-Agent`; por eso `WikipediaService` lo envía en la petición y en la descarga de la imagen. Las imágenes tienen licencia libre y se muestran con la atribución "Imagen: Wikipedia". La foto corresponde al modelo, no necesariamente al año del vehículo.
+
+**Organización del código (MVVM y Repository):**
+
+```text
+lib/
+├── domain/models/            modelo_vehiculo.dart, llamado_revision.dart, imagen_vehiculo.dart
+├── data/services/            nhtsa_service.dart, wikipedia_service.dart
+├── data/repositories/        datos_exception.dart, catalogo_repository.dart, llamados_repository.dart, imagenes_repository.dart
+└── ui/
+    ├── catalogo/             view_models/ y widgets/ (selección de modelo)
+    ├── llamados/             view_models/ y widgets/ (lista y detalle)
+    └── vehiculo/             view_models/ y widgets/ (imagen del modelo)
+```
+
+**Manejo de la petición:**
+
+- Petición `GET` con el paquete `http` y `Uri.parse`. Los nombres con espacios se codifican con `Uri.encodeComponent`.
+- Tiempo máximo de espera de 5 segundos con `.timeout`.
+- Si `statusCode` es distinto de 200 se lanza `EstadoHttpException`.
+- El repositorio convierte los errores en `DatosException`: `TimeoutException` → tiempo, `SocketException` → sin conexión, código 400 → vehículo no encontrado, otros códigos → servidor, JSON inválido → formato.
+- El ViewModel traduce cada código a un mensaje para el usuario. Las pantallas muestran un botón **Reintentar** que vuelve a ejecutar la consulta.
+- El código 400 de la API de llamados significa que NHTSA no conoce el vehículo; se muestra como "sin información" y no como error.
+
+**Limitaciones:** la información corresponde a vehículos vendidos en Estados Unidos y los textos de los llamados llegan en inglés. Algunos modelos que solo se venden en Colombia no aparecen, por eso el campo Modelo también acepta texto escrito a mano.
+
+**Pruebas:** `test/nhtsa_modelos_test.dart`, `test/nhtsa_repositorios_test.dart`, `test/nhtsa_view_models_test.dart` y `test/imagen_vehiculo_test.dart` prueban la conversión del JSON, el manejo de errores y los ViewModels con servicios y repositorios falsos, sin usar la red.
+
 ## 15. Historial de cambios y referencias
 
 ### 15.1 Historial de cambios
