@@ -76,7 +76,7 @@ class DetalleGastoPage extends StatelessWidget {
                 mostrarDato('Categoría', gasto.categoria),
                 mostrarDato('Descripción', gasto.descripcion),
                 mostrarDato('Fecha', formatoFecha(gasto.fecha)),
-                mostrarDato('Kilometraje', gasto.kilometraje),
+                mostrarDato('Kilometraje', '${gasto.kilometraje} km'),
                 mostrarDato('Valor', formatoPesos(gasto.valor)),
                 mostrarDato('Proveedor', gasto.proveedor),
                 mostrarDato('Notas', gasto.notas),
